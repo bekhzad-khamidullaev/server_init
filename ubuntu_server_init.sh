@@ -214,6 +214,12 @@ display_step 24 "Setting custom greeting in ~/.config/fish/config.fish"
 config_fish_file="/root/.config/fish/config.fish"
 echo 'set fish_greeting ""' > "$config_fish_file"
 
+
+# Enabling Qemu guest agent
+display_step 25 "Enabling Qemu guest agent"
+systemctl enable qemu-guest-agent
+systemctl start qemu-guest-agent
+
 # Display completion message
 echo
 echo "***********************************************************************"
