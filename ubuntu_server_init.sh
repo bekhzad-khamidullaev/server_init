@@ -209,6 +209,12 @@ display_step 23 "Installing Fish shell and setting it as the default shell for r
 apt install -y fish
 chsh -s /usr/bin/fish root
 
+# Set custom greeting in ~/.config/fish/config.fish
+display_step 24 "Setting custom greeting in ~/.config/fish/config.fish"
+config_fish_file="/root/.config/fish/config.fish"
+echo 'set fish_greeting ""' > "$config_fish_file"
+
+
 # Display completion message
 echo
 echo "***********************************************************************"
