@@ -214,7 +214,6 @@ display_step 24 "Setting custom greeting in ~/.config/fish/config.fish"
 config_fish_file="/root/.config/fish/config.fish"
 echo 'set fish_greeting ""' > "$config_fish_file"
 
-
 # Display completion message
 echo
 echo "***********************************************************************"
