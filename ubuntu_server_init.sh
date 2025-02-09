@@ -34,7 +34,7 @@ apt upgrade -y
 
 # Install essential packages for server management and security
 display_step 2 "Installing essential packages"
-apt install -y git curl htop unzip net-tools vim nano wget screen tmux iotop iftop bmon nload nmap traceroute ethtool sysstat dstat tcpdump socat lsof iptraf-ng whois dnsutils
+apt install -y git curl htop unzip net-tools vim nano wget screen tmux iotop iftop bmon nload nmap traceroute ethtool sysstat dstat tcpdump socat lsof iptraf-ng whois dnsutils ufw
 
 # Configure the firewall (UFW)
 display_step 3 "Configuring the firewall (UFW)"
