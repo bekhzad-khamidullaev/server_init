@@ -286,17 +286,20 @@ systemctl restart ssh
 # Add Message of the Day
 display_step 19 "Adding Message of the Day (MOTD)"
 cat <<EOL > /etc/motd
-#####################################################################
-#                                                                   #
-#             Welcome to $(hostname)                               #
-#                                                                   #
-#  This system is actively monitored. Unauthorized access is        #
-#  strictly prohibited and will be prosecuted to the fullest       #
-#  extent of the law.                                              #
-#                                                                   #
-#  Last login: $(last -n 1 | head -n 1)                             #
-#                                                                   #
-#####################################################################
+##################################################################################
+#                                                                                #
+#                   Welcome to $(hostname) - Secure Server                       #
+#                       Managed by: Bekhzad Khamidullah                          #
+#                                                                                #
+#          This system is actively monitored. Unauthorized access is             #
+#          strictly prohibited and will be prosecuted to the fullest             #
+#          extent of the law.                                                    #
+#                                                                                #
+#          Last login: $(last -n 1 | head -n 1 | sed 's/  */ /g')                #
+#                                                                                #
+#          System Uptime: $(uptime | sed 's/.*up //g' | sed 's/,  .*//g')        #
+#                                                                                #
+##################################################################################
 EOL
 
 chmod 644 /etc/motd
@@ -316,8 +319,8 @@ echo
 echo "***********************************************************************"
 echo "* Server Initialization and Optimization Script Completed!            *"
 echo "***********************************************************************"
-echo "* Key security settings have been applied.                             *"
-echo "* REMEMBER TO REVIEW AND SECURE SSH FURTHER.                           *"
-echo "* Regularly check logs and system performance.                         *"
-echo "* Ensure backups are configured appropriately.                       *"
+echo "* Key security settings have been applied.                            *"
+echo "* REMEMBER TO REVIEW AND SECURE SSH FURTHER.                          *"
+echo "* Regularly check logs and system performance.                        *"
+echo "* Ensure backups are configured appropriately.                        *"
 echo "***********************************************************************"
