@@ -340,18 +340,18 @@ systemctl restart ssh
 display_step 19 "Adding Message of the Day (MOTD)"
 cat <<EOL > /etc/motd
 ##################################################################################
-#                                                                                #
-#                   Welcome to $(hostname) - Secure Server                       #
-#                       Managed by: Bekhzad Khamidullah                          #
-#                                                                                #
-#          This system is actively monitored. Unauthorized access is             #
-#          strictly prohibited and will be prosecuted to the fullest             #
-#          extent of the law.                                                    #
-#                                                                                #
-#          Last login: $(last -n 1 | head -n 1 | sed 's/  */ /g')                #
-#                                                                                #
-#          System Uptime: $(uptime | sed 's/.*up //g' | sed 's/,  .*//g')        #
-#                                                                                #
+                                                                               
+                    Welcome to $(hostname) - Secure Server                       
+                        Managed by: Bekhzad Khamidullah                          
+                                                                                 
+           This system is actively monitored. Unauthorized access is             
+           strictly prohibited and will be prosecuted to the fullest             
+           extent of the law.                                                    
+                                                                                 
+           Last login: $(last -n 1 | head -n 1 | sed 's/  */ /g')                
+                                                                                 
+           System Uptime: $(uptime | sed 's/.*up //g' | sed 's/,  .*//g')        
+                                                                                 
 ##################################################################################
 EOL
 
