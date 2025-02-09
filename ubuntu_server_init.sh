@@ -210,19 +210,53 @@ EOL
 sysctl -p
 
 # Determine the block device and optimize the I/O scheduler
-block_device=$(lsblk -no NAME,MOUNTPOINT | awk '$2=="/" {print $1}' | sed 's/[^a-zA-Z0-9]//g')
-if [ -n "$block_device" ]; then
-    display_step 11 "Optimizing the I/O scheduler for $block_device"
-    # Use 'mq-deadline' if available, otherwise fallback to 'deadline'
-    if grep -q "mq-deadline" "/sys/block/$block_device/queue/scheduler"; then
-        echo "mq-deadline" > "/sys/block/$block_device/queue/scheduler"
-        echo "Setting I/O scheduler to mq-deadline"
+display_step 11 "Optimizing the I/O scheduler"
+
+# First, try to find the root device using mount
+root_device=$(mount | awk '$3 == "/" {print $1}' | sed 's/dev\///g')
+
+# Check if we found a device
+if [ -n "$root_device" ]; then
+
+    # If it's an LVM logical volume, extract the physical device
+    if [[ "$root_device" == *"-"* ]]; then
+        # LVM device name found, likely in the format vgname-lvname
+        vgname=$(echo "$root_device" | cut -d'-' -f1)
+        lvname=$(echo "$root_device" | cut -d'-' -f2)
+        block_device=$(lvdisplay "$vgname/$lvname" | grep "Block device" | awk '{print $3}')
+
+        if [ -z "$block_device" ]; then
+            echo "Error: Could not extract block device from LVM logical volume."
+            block_device="" # ensure block_device is empty
+        fi
     else
-        echo "deadline" > "/sys/block/$block_device/queue/scheduler"
-        echo "Setting I/O scheduler to deadline"
+        # Regular partition or device, use it directly
+        block_device="$root_device"
+    fi
+
+    # Optimize I/O scheduler if a valid block device has been found
+    if [ -n "$block_device" ]; then
+        block_device=$(echo "$block_device" | sed 's/[^a-zA-Z0-9]//g')
+        echo "Block device found: $block_device"
+
+        if [ -b "/sys/block/$block_device" ]; then  # Verify that it's a valid block device
+
+            # Use 'mq-deadline' if available, otherwise fallback to 'deadline'
+            if grep -q "mq-deadline" "/sys/block/$block_device/queue/scheduler"; then
+                echo "mq-deadline" > "/sys/block/$block_device/queue/scheduler"
+                echo "Setting I/O scheduler to mq-deadline"
+            else
+                echo "deadline" > "/sys/block/$block_device/queue/scheduler"
+                echo "Setting I/O scheduler to deadline"
+            fi
+        else
+            echo "Error: /sys/block/$block_device does not exist.  Invalid block device."
+        fi
+    else
+        echo "Error: Unable to determine the root block device."
     fi
 else
-    echo "Error: Unable to determine the root block device."
+    echo "Error: Unable to determine the root device from mount command."
 fi
 
 
