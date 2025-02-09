@@ -117,7 +117,11 @@ EOL
 # Install and configure a basic intrusion detection system with AIDE
 display_step 8 "Installing and configuring a basic intrusion detection system with AIDE"
 apt install -y aide
-aideinit
+
+# Run aideinit in a detached screen session
+display_step 8 "Running aideinit in a detached screen session"
+screen -dmS aide_init aideinit
+
 systemctl enable aide.timer
 systemctl start aide.timer
 
