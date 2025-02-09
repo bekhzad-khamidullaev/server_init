@@ -67,13 +67,28 @@ systemctl start fail2ban
 display_step 6 "Installing and configuring logwatch"
 apt install -y logwatch
 logwatch_conf="/etc/logwatch/conf/logwatch.conf"
-if [ -f "$logwatch_conf" ]; then
+logwatch_dir="/etc/logwatch/conf"
+
+if [ ! -d "$logwatch_dir" ]; then
+    mkdir -p "$logwatch_dir"
+fi
+if [ ! -f "$logwatch_conf" ]; then
+    echo "Creating basic logwatch.conf"
+    cat <<EOL > "$logwatch_conf"
+Detail = Med
+Output = mail
+MailTo = your_email@example.com
+MailFrom = Logwatch
+Range = yesterday
+Archive = no
+All = Yes
+EOL
+    chmod 644 "$logwatch_conf"
+else
     display_step 6 "Modifying logwatch.conf"
     sed -i 's/Detail = Low/Detail = Med/' "$logwatch_conf"
     sed -i 's/Output = stdout/Output = mail/' "$logwatch_conf"
     sed -i 's/MailTo = root/MailTo = your_email@example.com/' "$logwatch_conf" # Replace with your email
-else
-    echo "Warning: logwatch.conf not found at $logwatch_conf. Skipping modification."
 fi
 
 # Set up automatic updates
