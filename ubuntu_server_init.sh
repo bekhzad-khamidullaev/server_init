@@ -17,7 +17,7 @@ IFS=$'\n\t'
 umask 027
 
 export DEBIAN_FRONTEND=noninteractive
-VERSION="1.0.0"
+VERSION="1.2.0"
 
 log()   { printf "[INFO] %s\n" "$*"; }
 warn()  { printf "[WARN] %s\n" "$*"; }
@@ -44,7 +44,7 @@ require_ubuntu() {
 apt_install() {
   apt-get update -y
   apt-get upgrade -y
-  apt-get install -y "$@"
+  apt-get install -y --no-install-recommends "$@"
 }
 
 ensure_user() {
@@ -103,55 +103,72 @@ configure_ufw() {
   ufw --force reset
   ufw default deny incoming
   ufw default allow outgoing
-  ufw allow "$ssh_port"/tcp
-  [[ $http == "1" ]] && ufw allow 80/tcp
-  [[ $https == "1" ]] && ufw allow 443/tcp
+  ufw limit "$ssh_port"/tcp comment "SSH (rate limited)"
+  [[ $http == "1" ]] && ufw allow 80/tcp comment "HTTP"
+  [[ $https == "1" ]] && ufw allow 443/tcp comment "HTTPS"
   ufw logging medium
   ufw --force enable
 }
 
 configure_fail2ban() {
+  local ssh_port="$1"
   log "Configuring fail2ban"
-  cat <<'EOF' >/etc/fail2ban/jail.d/ssh-hardening.local
+  cat <<EOF >/etc/fail2ban/jail.d/ssh-hardening.local
 [sshd]
-enabled = true
-backend = systemd
+enabled  = true
+backend  = systemd
+port     = ${ssh_port}
 maxretry = 5
 findtime = 10m
 bantime  = 1h
+ignoreip = 127.0.0.1/8 ::1
 banaction = ufw
 EOF
   systemctl enable --now fail2ban
 }
 
+user_has_keys() {
+  local user="$1" home_dir
+  home_dir=$(getent passwd "$user" | cut -d: -f6)
+  [[ -n $home_dir && -s "$home_dir/.ssh/authorized_keys" ]]
+}
+
 configure_ssh() {
-  local ssh_port="$1" disable_pw="$2"
+  local ssh_port="$1" disable_pw="$2" sudo_user="$3"
 
   if [[ $disable_pw == "1" ]] && ! has_any_authorized_keys; then
     warn "No authorized_keys found; keeping password authentication enabled to avoid lockout"
     disable_pw=0
   fi
 
+  local root_login="prohibit-password"
+  if [[ -n $sudo_user ]] && user_has_keys "$sudo_user"; then
+    root_login="no"
+  fi
+
   log "Hardening SSH (port $ssh_port)"
   cat <<EOF >/etc/ssh/sshd_config.d/99-hardening.conf
 Port $ssh_port
 Protocol 2
-PermitRootLogin prohibit-password
+PermitRootLogin $root_login
 PasswordAuthentication $( [[ $disable_pw == "1" ]] && echo no || echo yes )
 KbdInteractiveAuthentication no
 ChallengeResponseAuthentication no
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys
 UsePAM yes
 ClientAliveInterval 300
 ClientAliveCountMax 3
 LoginGraceTime 30
 MaxAuthTries 3
+MaxSessions 4
 X11Forwarding no
 AllowTcpForwarding yes
 AllowAgentForwarding yes
 PrintMotd no
 Subsystem sftp /usr/lib/openssh/sftp-server
 EOF
-  systemctl restart sshd
+  systemctl reload sshd
 }
 
 configure_unattended_upgrades() {
@@ -193,6 +210,12 @@ net.ipv4.icmp_echo_ignore_broadcasts = 1
 net.ipv4.icmp_ignore_bogus_error_responses = 1
 net.ipv4.conf.all.accept_source_route = 0
 net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.default.accept_redirects = 0
+net.ipv4.conf.all.secure_redirects = 0
+net.ipv4.conf.default.secure_redirects = 0
+net.ipv4.conf.all.send_redirects = 0
+net.ipv4.conf.default.send_redirects = 0
 net.ipv4.tcp_syncookies = 1
 net.ipv4.tcp_timestamps = 1
 net.ipv4.conf.all.log_martians = 1
@@ -213,6 +236,19 @@ EOF
   fi
 
   sysctl --system >/dev/null
+}
+
+configure_journald() {
+  log "Configuring persistent journald with rotation"
+  mkdir -p /etc/systemd/journald.conf.d
+  cat <<'EOF' >/etc/systemd/journald.conf.d/10-persistent.conf
+[Journal]
+Storage=persistent
+SystemMaxUse=1G
+SystemMaxFileSize=200M
+MaxRetentionSec=1month
+EOF
+  systemctl restart systemd-journald
 }
 
 configure_qemu_guest_agent() {
@@ -244,18 +280,20 @@ main() {
   log "ubuntu_server_init v${VERSION}"
 
   apt_install \
-    ca-certificates curl wget git ufw fail2ban unattended-upgrades apt-listchanges \
+    ca-certificates gnupg lsb-release curl wget git openssh-server \
+    ufw fail2ban unattended-upgrades apt-listchanges \
     needrestart net-tools htop tmux vim nano jq software-properties-common \
     qemu-guest-agent auditd
 
   configure_timezone "$TIMEZONE"
   configure_ufw "$SSH_PORT" "$ALLOW_HTTP" "$ALLOW_HTTPS"
-  configure_fail2ban
+  configure_fail2ban "$SSH_PORT"
   ensure_user "$NEW_SUDO_USER" "$NEW_SUDO_PUBKEY"
-  configure_ssh "$SSH_PORT" "$DISABLE_PASSWORD_AUTH"
+  configure_ssh "$SSH_PORT" "$DISABLE_PASSWORD_AUTH" "$NEW_SUDO_USER"
   configure_unattended_upgrades
   configure_needrestart
   configure_sysctl
+  configure_journald
   configure_qemu_guest_agent
 
   systemctl enable --now systemd-timesyncd auditd
