@@ -1,379 +1,275 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# Harden and baseline an Ubuntu server for production.
+# Idempotent-ish: safe to run multiple times.
+# Tunables via env vars:
+#   TIMEZONE=UTC                # System timezone
+#   SSH_PORT=22                 # SSH port to keep open
+#   ALLOW_HTTP=1                # Allow TCP/80 in UFW (0 to disable)
+#   ALLOW_HTTPS=1               # Allow TCP/443 in UFW (0 to disable)
+#   DISABLE_IPV6=0              # 1 to disable IPv6 via sysctl
+#   DISABLE_PASSWORD_AUTH=1     # 1 to disable SSH password auth when keys exist
+#   NEW_SUDO_USER=""            # Optional sudo-capable user to create
+#   NEW_SUDO_PUBKEY=""          # Public key to install for NEW_SUDO_USER
+#   REBOOT_AFTER=0              # 1 to reboot automatically at the end
 
-# Function to generate a strong password
-generate_password() {
-    head -c 32 /dev/urandom | base64 | tr -dc '[:alnum:]!@#$%^&*()_+' | head -c 20
-}
-
-# Function to display a step in the pseudo UI
-display_step() {
-    echo
-    echo "------------------------------------------------------------"
-    echo "| Step $1: $2"
-    echo "------------------------------------------------------------"
-}
-
-# Function to check if a package is installed
-is_package_installed() {
-  dpkg -s "$1" > /dev/null 2>&1
-}
-
-
-# Check if the script is run as root
-if [ "$(id -u)" -ne 0 ]; then
-    echo "Please run the script as root or using sudo."
-    exit 1
-fi
+set -euo pipefail
+IFS=$'\n\t'
+umask 027
 
 export DEBIAN_FRONTEND=noninteractive
+VERSION="1.0.0"
 
-# Update the system
-display_step 1 "Updating the system"
-apt update -y
-apt upgrade -y
+log()   { printf "[INFO] %s\n" "$*"; }
+warn()  { printf "[WARN] %s\n" "$*"; }
+fail()  { printf "[ERROR] %s\n" "$*" >&2; exit 1; }
 
-# Install essential packages for server management and security
-display_step 2 "Installing essential packages"
-apt install -y git curl htop unzip net-tools vim nano wget screen tmux iotop iftop bmon nload nmap traceroute ethtool sysstat dstat tcpdump socat lsof iptraf-ng whois dnsutils ufw qemu-guest-agent
+trap 'fail "Line ${LINENO}: command failed"' ERR
 
-# Configure the firewall (UFW)
-display_step 3 "Configuring the firewall (UFW)"
-ufw allow OpenSSH
-ufw default deny incoming
-ufw default allow outgoing
-ufw logging on
-ufw --force enable
-
-# Set the timezone to Asia/Tashkent
-display_step 4 "Setting the timezone to Asia/Tashkent"
-timedatectl set-timezone Asia/Tashkent
-
-# Install and configure fail2ban
-display_step 5 "Installing and configuring fail2ban"
-apt install -y fail2ban
-cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
-
-# Customize fail2ban jail.local with specific rules (adjust bantime, findtime, maxretry as needed)
-sed -i 's/;bantime  = 10m/bantime = 1h/' /etc/fail2ban/jail.local  # Example: Ban for 1 hour
-sed -i 's/;findtime = 10m/findtime = 10m/' /etc/fail2ban/jail.local
-sed -i 's/;maxretry = 5/maxretry = 5/' /etc/fail2ban/jail.local
-
-# Configure common jails (adjust as needed)
-sed -i 's/enabled = false/enabled = true/' /etc/fail2ban/jail.local
-systemctl enable fail2ban
-systemctl start fail2ban
-
-# Install and configure logwatch for log analysis
-display_step 6 "Installing and configuring logwatch"
-apt install -y logwatch
-logwatch_conf="/etc/logwatch/conf/logwatch.conf"
-logwatch_dir="/etc/logwatch/conf"
-
-if [ ! -d "$logwatch_dir" ]; then
-    mkdir -p "$logwatch_dir"
-fi
-if [ ! -f "$logwatch_conf" ]; then
-    echo "Creating basic logwatch.conf"
-    cat <<EOL > "$logwatch_conf"
-Detail = Med
-Output = mail
-MailTo = your_email@example.com
-MailFrom = Logwatch
-Range = yesterday
-Archive = no
-All = Yes
-EOL
-    chmod 644 "$logwatch_conf"
-else
-    display_step 6 "Modifying logwatch.conf"
-    sed -i 's/Detail = Low/Detail = Med/' "$logwatch_conf"
-    sed -i 's/Output = stdout/Output = mail/' "$logwatch_conf"
-    sed -i 's/MailTo = root/MailTo = your_email@example.com/' "$logwatch_conf" # Replace with your email
-fi
-
-# Set up automatic updates
-display_step 7 "Setting up automatic updates"
-apt install -y unattended-upgrades apt-listchanges
-dpkg-reconfigure --priority=low unattended-upgrades
-# Configure unattended-upgrades
-cat <<EOL > /etc/apt/apt.conf.d/50unattended-upgrades
-Unattended-Upgrade::Allowed-Origins {
-    "\${distro_id}:\${distro_codename}-security";
-    "\${distro_id}:\${distro_codename}-updates";
-    "\${distro_id}:\${distro_codename}-proposed";
-    "\${distro_id}:\${distro_codename}-backports";
-};
-
-Unattended-Upgrade::Package-Blacklist {
-    # Put packages to exclude from automatic upgrades here
-    # Example:
-    # "linux-image-generic";
-};
-
-Unattended-Upgrade::Mail "your_email@example.com"; # Replace with your email
-Unattended-Upgrade::MailOnlyOnError "true";
-EOL
-
-# Install and configure a basic intrusion detection system with AIDE
-display_step 8 "Installing and configuring a basic intrusion detection system with AIDE"
-apt install -y aide
-
-# Run aideinit in a detached screen session
-display_step 8 "Running aideinit in a detached screen session"
-screen -dmS aide_init aideinit
-
-systemctl enable aide.timer
-systemctl start aide.timer
-
-# Schedule daily AIDE checks and run it in the background, suppressing output
-echo "0 0 * * * root /usr/sbin/aide --check >/dev/null 2>&1" > /etc/cron.d/aide
-
-# Set up basic log rotation
-display_step 9 "Setting up basic log rotation"
-cat <<EOL > /etc/logrotate.d/custom_logs
-/var/log/custom/*.log {
-    weekly
-    rotate 4
-    compress
-    delaycompress
-    missingok
-    notifempty
-    create 0640 root adm
+require_root() {
+  if [[ $(id -u) -ne 0 ]]; then
+    fail "Run as root (sudo)."
+  fi
 }
-EOL
 
-# System performance optimization
-display_step 10 "Optimizing the system for best performance"
+require_ubuntu() {
+  if [[ -r /etc/os-release ]]; then
+    # shellcheck disable=SC1091
+    . /etc/os-release
+    [[ ${ID:-} == "ubuntu" ]] || fail "This script targets Ubuntu; found ${ID:-unknown}."
+  else
+    fail "/etc/os-release missing; cannot verify OS."
+  fi
+}
 
-# Set performance-related kernel parameters
-cat <<EOL > /etc/sysctl.conf
-# Recommended sysctl settings for improved performance
+apt_install() {
+  apt-get update -y
+  apt-get upgrade -y
+  apt-get install -y "$@"
+}
 
-# Increase the maximum number of open file descriptors
-fs.file-max = 2097152
+ensure_user() {
+  local user="$1" pubkey="$2"
+  if [[ -z $user ]]; then
+    return 0
+  fi
 
-# Allow for more PIDs (processes/threads)
-kernel.pid_max = 65536
+  if id "$user" >/dev/null 2>&1; then
+    log "User $user already exists"
+  else
+    log "Creating sudo user $user"
+    adduser --disabled-password --gecos "" "$user"
+    usermod -aG sudo "$user"
+  fi
 
-# Increase system file descriptor limit
-fs.nr_open = 1048576
+  local home_dir
+  home_dir=$(getent passwd "$user" | cut -d: -f6)
+  mkdir -p "$home_dir/.ssh"
+  chmod 700 "$home_dir/.ssh"
 
-# Increase network buffer limits
-net.core.rmem_max = 16777216
-net.core.wmem_max = 16777216
+  if [[ -n $pubkey ]]; then
+    printf '%s\n' "$pubkey" >"$home_dir/.ssh/authorized_keys"
+    chmod 600 "$home_dir/.ssh/authorized_keys"
+    chown -R "$user:$user" "$home_dir/.ssh"
+    log "Installed provided public key for $user"
+  elif [[ -f /root/.ssh/authorized_keys ]]; then
+    install -m 600 /root/.ssh/authorized_keys "$home_dir/.ssh/authorized_keys"
+    chown "$user:$user" "$home_dir/.ssh/authorized_keys"
+    log "Copied root authorized_keys to $user"
+  else
+    warn "No public key provided for $user and /root/.ssh/authorized_keys missing"
+  fi
+}
 
-# Increase the maximum amount of option memory buffers
-net.core.optmem_max = 25165824
+has_any_authorized_keys() {
+  [[ -s /root/.ssh/authorized_keys ]] && return 0
+  if [[ -n ${NEW_SUDO_USER:-} ]]; then
+    local home_dir
+    home_dir=$(getent passwd "$NEW_SUDO_USER" | cut -d: -f6)
+    [[ -s "$home_dir/.ssh/authorized_keys" ]] && return 0
+  fi
+  return 1
+}
 
-# Increase TCP buffer size (adapt to available RAM, example for 16GB RAM)
-net.ipv4.tcp_rmem = 4096 87380 16777216
-net.ipv4.tcp_wmem = 4096 65536 16777216
+configure_timezone() {
+  local tz="$1"
+  log "Setting timezone to $tz"
+  timedatectl set-timezone "$tz"
+  timedatectl set-ntp true
+}
 
-# Enable TCP window scaling
-net.ipv4.tcp_window_scaling = 1
+configure_ufw() {
+  local ssh_port="$1" http="$2" https="$3"
+  log "Configuring UFW"
+  ufw --force reset
+  ufw default deny incoming
+  ufw default allow outgoing
+  ufw allow "$ssh_port"/tcp
+  [[ $http == "1" ]] && ufw allow 80/tcp
+  [[ $https == "1" ]] && ufw allow 443/tcp
+  ufw logging medium
+  ufw --force enable
+}
 
-# Enable fast recycling of TIME_WAIT sockets (use with caution, might cause issues)
-# net.ipv4.tcp_tw_recycle = 1 #Deprecated and removed in newer kernels
+configure_fail2ban() {
+  log "Configuring fail2ban"
+  cat <<'EOF' >/etc/fail2ban/jail.d/ssh-hardening.local
+[sshd]
+enabled = true
+backend = systemd
+maxretry = 5
+findtime = 10m
+bantime  = 1h
+banaction = ufw
+EOF
+  systemctl enable --now fail2ban
+}
 
-# Enable TCP quick acknowledgment
-net.ipv4.tcp_quickack = 1
+configure_ssh() {
+  local ssh_port="$1" disable_pw="$2"
 
-# Increase the maximum number of backlogged sockets
-net.core.somaxconn = 65535
+  if [[ $disable_pw == "1" ]] && ! has_any_authorized_keys; then
+    warn "No authorized_keys found; keeping password authentication enabled to avoid lockout"
+    disable_pw=0
+  fi
 
-# Increase the maximum number of TCP connections
-net.ipv4.tcp_max_syn_backlog = 8192
+  log "Hardening SSH (port $ssh_port)"
+  cat <<EOF >/etc/ssh/sshd_config.d/99-hardening.conf
+Port $ssh_port
+Protocol 2
+PermitRootLogin prohibit-password
+PasswordAuthentication $( [[ $disable_pw == "1" ]] && echo no || echo yes )
+KbdInteractiveAuthentication no
+ChallengeResponseAuthentication no
+UsePAM yes
+ClientAliveInterval 300
+ClientAliveCountMax 3
+LoginGraceTime 30
+MaxAuthTries 3
+X11Forwarding no
+AllowTcpForwarding yes
+AllowAgentForwarding yes
+PrintMotd no
+Subsystem sftp /usr/lib/openssh/sftp-server
+EOF
+  systemctl restart sshd
+}
 
-# Increase the maximum number of memory map areas a process may have
-vm.max_map_count = 262144
+configure_unattended_upgrades() {
+  log "Enabling unattended upgrades"
+  cat <<'EOF' >/etc/apt/apt.conf.d/51custom-unattended-upgrades
+Unattended-Upgrade::Allowed-Origins {
+        "${distro_id}:${distro_codename}-security";
+        "${distro_id}:${distro_codename}-updates";
+};
+Unattended-Upgrade::Mail "root";
+Unattended-Upgrade::MailOnlyOnError "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";
+Unattended-Upgrade::Automatic-Reboot "false";
+EOF
 
-# Reduce the tendency to swap (adjust to system requirements)
-vm.swappiness = 10
+  cat <<'EOF' >/etc/apt/apt.conf.d/20auto-upgrades
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::AutocleanInterval "7";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::Verbose "0";
+EOF
+}
 
-# Control the cache pressure (adjust to system requirements)
-vm.vfs_cache_pressure = 50
+configure_needrestart() {
+  log "Configuring needrestart for noninteractive runs"
+  mkdir -p /etc/needrestart/conf.d
+  cat <<'EOF' >/etc/needrestart/conf.d/50auto.conf
+$nrconf{restart} = 'a';
+EOF
+}
 
-# TCP SYN cookies protection
-net.ipv4.tcp_syncookies = 1
-
-# Prevent against SYN flood attacks
-net.ipv4.tcp_synack_retries = 5
-net.ipv4.tcp_abort_on_overflow = 1
-
-# Ignore broadcasts request
-net.ipv4.icmp_echo_ignore_broadcasts = 1
-
-# Don't accept source routed packets
-net.ipv4.conf.all.accept_source_route = 0
-net.ipv4.conf.default.accept_source_route = 0
-
-# Enable TCP BBR congestion control algorithm
-net.core.default_qdisc=fq
-net.ipv4.tcp_congestion_control=bbr
-
-# Improve connection tracking hash table size for busy servers
-net.netfilter.nf_conntrack_max = 655360
-net.nf_conntrack_max = 655360  # Legacy setting, might be needed on older kernels
-net.netfilter.nf_conntrack_tcp_timeout_established = 7200 # Keep established connections longer (in seconds)
-
-# Protection against ICMP attacks
-net.ipv4.icmp_ignore_bogus_error_responses = 1
-
-# Enable Reverse Path Filtering
+configure_sysctl() {
+  log "Applying sysctl hardening"
+  cat <<'EOF' >/etc/sysctl.d/99-hardening.conf
 net.ipv4.conf.all.rp_filter = 1
 net.ipv4.conf.default.rp_filter = 1
+net.ipv4.icmp_echo_ignore_broadcasts = 1
+net.ipv4.icmp_ignore_bogus_error_responses = 1
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_timestamps = 1
+net.ipv4.conf.all.log_martians = 1
+net.ipv4.conf.default.log_martians = 1
+kernel.kptr_restrict = 2
+kernel.dmesg_restrict = 1
+fs.protected_hardlinks = 1
+fs.protected_symlinks = 1
+fs.protected_fifos = 1
+fs.protected_regular = 1
+EOF
 
-EOL
+  if [[ ${DISABLE_IPV6:-0} == "1" ]]; then
+    cat <<'EOF' >>/etc/sysctl.d/99-hardening.conf
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+EOF
+  fi
 
-# Apply the new sysctl settings
-sysctl -p
+  sysctl --system >/dev/null
+}
 
-# Determine the block device and optimize the I/O scheduler
-display_step 11 "Optimizing the I/O scheduler"
+configure_qemu_guest_agent() {
+  if systemctl list-unit-files | grep -q '^qemu-guest-agent'; then
+    log "Enabling qemu-guest-agent"
+    systemctl enable --now qemu-guest-agent
+  fi
+}
 
-# First, try to find the root device using mount
-root_device=$(mount | awk '$3 == "/" {print $1}' | sed 's/dev\///g')
+clean_packages() {
+  apt-get autoremove -y
+  apt-get clean
+}
 
-# Check if we found a device
-if [ -n "$root_device" ]; then
+main() {
+  require_root
+  require_ubuntu
 
-    # If it's an LVM logical volume, extract the physical device
-    if [[ "$root_device" == *"-"* ]]; then
-        # LVM device name found, likely in the format vgname-lvname
-        vgname=$(echo "$root_device" | cut -d'-' -f1)
-        lvname=$(echo "$root_device" | cut -d'-' -f2)
-        block_device=$(lvdisplay "$vgname/$lvname" | grep "Block device" | awk '{print $3}')
+  SSH_PORT=${SSH_PORT:-22}
+  TIMEZONE=${TIMEZONE:-UTC}
+  ALLOW_HTTP=${ALLOW_HTTP:-1}
+  ALLOW_HTTPS=${ALLOW_HTTPS:-1}
+  DISABLE_IPV6=${DISABLE_IPV6:-0}
+  DISABLE_PASSWORD_AUTH=${DISABLE_PASSWORD_AUTH:-1}
+  NEW_SUDO_USER=${NEW_SUDO_USER:-}
+  NEW_SUDO_PUBKEY=${NEW_SUDO_PUBKEY:-}
+  REBOOT_AFTER=${REBOOT_AFTER:-0}
 
-        if [ -z "$block_device" ]; then
-            echo "Error: Could not extract block device from LVM logical volume."
-            block_device="" # ensure block_device is empty
-        fi
-    else
-        # Regular partition or device, use it directly
-        block_device="$root_device"
-    fi
+  log "ubuntu_server_init v${VERSION}"
 
-    # Optimize I/O scheduler if a valid block device has been found
-    if [ -n "$block_device" ]; then
-        block_device=$(echo "$block_device" | sed 's/[^a-zA-Z0-9]//g')
-        echo "Block device found: $block_device"
+  apt_install \
+    ca-certificates curl wget git ufw fail2ban unattended-upgrades apt-listchanges \
+    needrestart net-tools htop tmux vim nano jq software-properties-common \
+    qemu-guest-agent auditd
 
-        if [ -b "/sys/block/$block_device" ]; then  # Verify that it's a valid block device
+  configure_timezone "$TIMEZONE"
+  configure_ufw "$SSH_PORT" "$ALLOW_HTTP" "$ALLOW_HTTPS"
+  configure_fail2ban
+  ensure_user "$NEW_SUDO_USER" "$NEW_SUDO_PUBKEY"
+  configure_ssh "$SSH_PORT" "$DISABLE_PASSWORD_AUTH"
+  configure_unattended_upgrades
+  configure_needrestart
+  configure_sysctl
+  configure_qemu_guest_agent
 
-            # Use 'mq-deadline' if available, otherwise fallback to 'deadline'
-            if grep -q "mq-deadline" "/sys/block/$block_device/queue/scheduler"; then
-                echo "mq-deadline" > "/sys/block/$block_device/queue/scheduler"
-                echo "Setting I/O scheduler to mq-deadline"
-            else
-                echo "deadline" > "/sys/block/$block_device/queue/scheduler"
-                echo "Setting I/O scheduler to deadline"
-            fi
-        else
-            echo "Error: /sys/block/$block_device does not exist.  Invalid block device."
-        fi
-    else
-        echo "Error: Unable to determine the root block device."
-    fi
-else
-    echo "Error: Unable to determine the root device from mount command."
-fi
+  systemctl enable --now systemd-timesyncd auditd
 
+  clean_packages
 
-# Configure Transparent Huge Pages (THP)
-display_step 12 "Configuring Transparent Huge Pages (THP)"
-echo "never" > /sys/kernel/mm/transparent_hugepage/enabled
-echo "never" > /sys/kernel/mm/transparent_hugepage/defrag
+  log "Baseline hardening complete"
+  if [[ $REBOOT_AFTER == "1" ]]; then
+    log "Rebooting in 5 seconds (REBOOT_AFTER=1)"
+    sleep 5
+    reboot
+  else
+    log "Reboot recommended after kernel updates"
+  fi
+}
 
-# Disable unnecessary services
-display_step 13 "Disabling unnecessary services"
-systemctl stop postfix 2>/dev/null || true
-systemctl disable postfix 2>/dev/null || true
-systemctl stop apport 2>/dev/null || true # Error Reporting
-systemctl disable apport 2>/dev/null || true
-
-# Remove the Ubuntu motd
-display_step 14 "Removing the Ubuntu motd"
-rm -f /etc/update-motd.d/*
-
-#  Set custom greeting in ~/.config/fish/config.fish
-display_step 15 "Setting custom greeting in ~/.config/fish/config.fish"
-config_fish_file="/root/.config/fish/config.fish"
-mkdir -p /root/.config/fish/
-echo 'set fish_greeting ""' > "$config_fish_file"
-
-
-# Enabling Qemu guest agent
-display_step 16 "Enabling Qemu guest agent"
-if is_package_installed "qemu-guest-agent"; then
-    systemctl enable qemu-guest-agent
-    systemctl start qemu-guest-agent
-else
-    echo "Qemu guest agent not installed, skipping..."
-fi
-
-# Security Hardening
-
-# Disable IPv6 if not needed
-display_step 17 "Disabling IPv6 (if not needed)"
-if ! grep -q "disable_ipv6=1" /etc/sysctl.conf; then
-    echo "net.ipv6.conf.all.disable_ipv6=1" >> /etc/sysctl.conf
-    echo "net.ipv6.conf.default.disable_ipv6=1" >> /etc/sysctl.conf
-    echo "net.ipv6.conf.lo.disable_ipv6=1" >> /etc/sysctl.conf
-    sysctl -p
-fi
-
-# Harden SSH Configuration
-display_step 18 "Hardening SSH Configuration"
-
-#  Disable root login and password authentication (recommended for production)
-#  Requires setting up key-based authentication first.
-#  Uncomment the following lines *AFTER* verifying key-based authentication works!
-
-sed -i 's/PermitRootLogin yes/PermitRootLogin prohibit-password/' /etc/ssh/sshd_config
-sed -i 's/PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
-sed -i 's/#MaxAuthTries 6/MaxAuthTries 3/' /etc/ssh/sshd_config
-sed -i 's/#ClientAliveInterval 0/ClientAliveInterval 300/' /etc/ssh/sshd_config
-sed -i 's/#ClientAliveCountMax 3/ClientAliveCountMax 3/' /etc/ssh/sshd_config
-systemctl restart ssh
-
-# Add Message of the Day
-display_step 19 "Adding Message of the Day (MOTD)"
-cat <<EOL > /etc/motd
-##################################################################################
-                                                                               
-                    Welcome to $(hostname) - Secure Server                       
-                        Managed by: Bekhzad Khamidullah                          
-                                                                                 
-           This system is actively monitored. Unauthorized access is             
-           strictly prohibited and will be prosecuted to the fullest             
-           extent of the law.                                                    
-                                                                                 
-           Last login: $(last -n 1 | head -n 1 | sed 's/  */ /g')                
-                                                                                 
-           System Uptime: $(uptime | sed 's/.*up //g' | sed 's/,  .*//g')        
-                                                                                 
-##################################################################################
-EOL
-
-chmod 644 /etc/motd
-
-# Remove old kernels
-
-display_step 20 "Removing old kernels"
-apt autoremove -y
-apt clean
-
-# Install unattended reboot
-display_step 21 "Configuring unattended reboots"
-apt install -y needrestart
-
-# Completion message
-echo
-echo "***********************************************************************"
-echo "* Server Initialization and Optimization Script Completed!            *"
-echo "***********************************************************************"
-echo "* Key security settings have been applied.                            *"
-echo "* REMEMBER TO REVIEW AND SECURE SSH FURTHER.                          *"
-echo "* Regularly check logs and system performance.                        *"
-echo "* Ensure backups are configured appropriately.                        *"
-echo "***********************************************************************"
+main "$@"
