@@ -25,22 +25,27 @@ VIRT_TYPE=""
 RAM_GB=0
 HAS_SWAP=0
 
-TIMEZONE=""
-SSH_PORT=""
-ADMIN_USER=""
-ADMIN_PUBKEY=""
-ALLOW_HTTP=1
-ALLOW_HTTPS=1
-DISABLE_PASSWORD_AUTH=1
-DISABLE_ROOT_SSH=1
-ENABLE_FAIL2BAN=1
-ENABLE_UNATTENDED=1
-DISABLE_IPV6=0
-INSTALL_QEMU_AGENT=0
-AUTO_SWAP=0
-REBOOT_AFTER=0
-EXTRA_TCP_PORTS=""
-SERVER_ROLE="general"
+TIMEZONE="${TIMEZONE:-}"
+SSH_PORT="${SSH_PORT:-}"
+ADMIN_USER="${ADMIN_USER:-}"
+ADMIN_PUBKEY="${ADMIN_PUBKEY:-}"
+PRIMARY_USER="${PRIMARY_USER:-}"
+ROOT_SSH_KEY="${ROOT_SSH_KEY:-}"
+ALLOW_HTTP="${ALLOW_HTTP:-1}"
+ALLOW_HTTPS="${ALLOW_HTTPS:-1}"
+DISABLE_PASSWORD_AUTH="${DISABLE_PASSWORD_AUTH:-1}"
+DISABLE_ROOT_SSH="${DISABLE_ROOT_SSH:-1}"
+ENABLE_FAIL2BAN="${ENABLE_FAIL2BAN:-1}"
+ENABLE_UNATTENDED="${ENABLE_UNATTENDED:-1}"
+DISABLE_IPV6="${DISABLE_IPV6:-0}"
+INSTALL_QEMU_AGENT="${INSTALL_QEMU_AGENT:-0}"
+INSTALL_FISH="${INSTALL_FISH:-1}"
+ENABLE_ROOT_KEY_LOGIN="${ENABLE_ROOT_KEY_LOGIN:-0}"
+AUTO_SWAP="${AUTO_SWAP:-0}"
+REBOOT_AFTER="${REBOOT_AFTER:-0}"
+EXTRA_TCP_PORTS="${EXTRA_TCP_PORTS:-}"
+EXTRA_UDP_PORTS="${EXTRA_UDP_PORTS:-}"
+SERVER_ROLE="${SERVER_ROLE:-general}"
 NONINTERACTIVE="${NONINTERACTIVE:-0}"
 
 cleanup() {
@@ -81,6 +86,20 @@ log() {
 
 run_quiet() {
   "$@" >>"$LOG_FILE" 2>&1
+}
+
+wait_for_apt_lock() {
+  local waited=0
+  local max_wait="${1:-300}"
+
+  while fuser /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/cache/apt/archives/lock >/dev/null 2>&1; do
+    if (( waited >= max_wait )); then
+      fail "Timed out waiting for apt/dpkg lock."
+    fi
+    log "Waiting for apt/dpkg lock to be released..."
+    sleep 5
+    ((waited+=5))
+  done
 }
 
 ui_msg() {
@@ -164,7 +183,12 @@ detect_sftp_server_path() {
 
 detect_current_ssh_port() {
   if command -v sshd >/dev/null 2>&1; then
-    CURRENT_SSH_PORT="$(sshd -T 2>/dev/null | awk '/^port / {print $2; exit}')"
+    while read -r key value _; do
+      if [[ "$key" == "port" && -n "$value" ]]; then
+        CURRENT_SSH_PORT="$value"
+        break
+      fi
+    done < <(sshd -T 2>/dev/null)
   fi
   CURRENT_SSH_PORT="${CURRENT_SSH_PORT:-22}"
 }
@@ -228,6 +252,7 @@ collect_main_settings() {
     TIMEZONE="${TIMEZONE:-$CURRENT_TIMEZONE}"
     SSH_PORT="${SSH_PORT:-$CURRENT_SSH_PORT}"
     EXTRA_TCP_PORTS="${EXTRA_TCP_PORTS:-}"
+    EXTRA_UDP_PORTS="${EXTRA_UDP_PORTS:-}"
   else
   TIMEZONE="$(ui_input "Enter timezone" "$CURRENT_TIMEZONE" "Timezone")"
   TIMEZONE="${TIMEZONE:-$CURRENT_TIMEZONE}"
@@ -250,6 +275,7 @@ collect_main_settings() {
 
   if ! parse_env_bool "$NONINTERACTIVE"; then
     EXTRA_TCP_PORTS="$(ui_input "Extra TCP ports to open in UFW.\nUse comma-separated values, e.g. 8080,8443,5432" "$EXTRA_TCP_PORTS" "Extra Ports")"
+    EXTRA_UDP_PORTS="$(ui_input "Extra UDP ports/ranges to open in UFW.\nUse comma-separated values, e.g. 3478,5349,10000:20000" "$EXTRA_UDP_PORTS" "Extra UDP Ports")"
   fi
 }
 
@@ -332,6 +358,7 @@ show_plan() {
 - Auto swap: $( [[ $AUTO_SWAP -eq 1 ]] && echo enabled || echo disabled )
 - Reboot at end: $( [[ $REBOOT_AFTER -eq 1 ]] && echo yes || echo no )
 - Extra ports: ${EXTRA_TCP_PORTS:-none}
+- Extra UDP ports: ${EXTRA_UDP_PORTS:-none}
 
 Log file: ${LOG_FILE}" "Execution Plan"
 
@@ -349,6 +376,7 @@ step() {
 
 apt_upgrade_and_install() {
   step "Updating apt metadata and installing production baseline packages..."
+  wait_for_apt_lock
 
   local packages=(
     ca-certificates
@@ -379,6 +407,7 @@ apt_upgrade_and_install() {
     chrony
     auditd
     debsums
+    fish
   )
 
   if (( INSTALL_QEMU_AGENT == 1 )); then
@@ -438,6 +467,105 @@ ensure_admin_user() {
     chmod 600 "$home_dir/.ssh/authorized_keys"
   elif [[ -s /root/.ssh/authorized_keys ]]; then
     install -m 600 -o "$ADMIN_USER" -g "$ADMIN_USER" /root/.ssh/authorized_keys "$home_dir/.ssh/authorized_keys"
+  fi
+}
+
+ensure_root_ssh_key() {
+  (( ENABLE_ROOT_KEY_LOGIN == 1 )) || return 0
+  [[ -n "$ROOT_SSH_KEY" ]] || return 0
+  step "Installing provided SSH public key for root..."
+
+  install -d -m 700 /root/.ssh
+  touch /root/.ssh/authorized_keys
+  chmod 600 /root/.ssh/authorized_keys
+
+  if ! grep -Fqx "$ROOT_SSH_KEY" /root/.ssh/authorized_keys; then
+    printf '%s\n' "$ROOT_SSH_KEY" >>/root/.ssh/authorized_keys
+  fi
+}
+
+rewrite_ssh_access_directive() {
+  local file="$1"
+  local directive="$2"
+  local mode="$3"
+  local tmp="${TMP_DIR}/$(basename "$file").${directive}.tmp"
+
+  [[ -f "$file" ]] || return 0
+
+  awk -v directive="$directive" -v mode="$mode" '
+    $1 == directive {
+      if (mode == "remove_root") {
+        out = directive
+        count = 0
+        for (i = 2; i <= NF; i++) {
+          if ($i != "root") {
+            out = out " " $i
+            count++
+          }
+        }
+        if (count > 0) {
+          print out
+        } else {
+          print "# " $0 " # disabled by ubuntu_server_init"
+        }
+        next
+      }
+
+      if (mode == "add_root") {
+        has_root = 0
+        for (i = 2; i <= NF; i++) {
+          if ($i == "root") {
+            has_root = 1
+          }
+        }
+        print $0 (has_root ? "" : " root")
+        next
+      }
+    }
+
+    { print }
+  ' "$file" >"$tmp"
+
+  cat "$tmp" >"$file"
+}
+
+configure_root_key_login() {
+  (( ENABLE_ROOT_KEY_LOGIN == 1 )) || return 0
+  step "Allowing root SSH login by key..."
+
+  backup_file /etc/ssh/sshd_config
+  rewrite_ssh_access_directive /etc/ssh/sshd_config DenyUsers remove_root
+  rewrite_ssh_access_directive /etc/ssh/sshd_config AllowUsers add_root
+
+  if ls /etc/ssh/sshd_config.d/*.conf >/dev/null 2>&1; then
+    local file
+    for file in /etc/ssh/sshd_config.d/*.conf; do
+      backup_file "$file"
+      rewrite_ssh_access_directive "$file" DenyUsers remove_root
+      rewrite_ssh_access_directive "$file" AllowUsers add_root
+    done
+  fi
+
+  mkdir -p /etc/ssh/sshd_config.d
+  cat <<'EOF' >/etc/ssh/sshd_config.d/98-root-key-login.conf
+PermitRootLogin prohibit-password
+PubkeyAuthentication yes
+EOF
+}
+
+configure_fish_shell() {
+  (( INSTALL_FISH == 1 )) || return 0
+  step "Configuring fish as default shell for root and primary user..."
+
+  command -v fish >/dev/null 2>&1 || return 0
+
+  if ! grep -Fxq "/usr/bin/fish" /etc/shells; then
+    printf '/usr/bin/fish\n' >>/etc/shells
+  fi
+
+  chsh -s /usr/bin/fish root
+  if [[ -n "$PRIMARY_USER" ]] && id "$PRIMARY_USER" >/dev/null 2>&1; then
+    chsh -s /usr/bin/fish "$PRIMARY_USER"
   fi
 }
 
@@ -523,10 +651,30 @@ configure_ufw() {
     local port
     while read -r port; do
       [[ -z "$port" ]] && continue
-      [[ "$port" =~ ^[0-9]+$ ]] || fail "Invalid extra TCP port: $port"
-      (( port >= 1 && port <= 65535 )) || fail "Invalid extra TCP port: $port"
-      run_quiet ufw allow "${port}/tcp" comment "Custom"
+      if [[ "$port" =~ ^[0-9]+$ ]]; then
+        (( port >= 1 && port <= 65535 )) || fail "Invalid extra TCP port: $port"
+        run_quiet ufw allow "${port}/tcp" comment "Custom TCP"
+      elif [[ "$port" =~ ^[0-9]+:[0-9]+$ ]]; then
+        run_quiet ufw allow "${port}/tcp" comment "Custom TCP range"
+      else
+        fail "Invalid extra TCP port or range: $port"
+      fi
     done < <(tr ', ' '\n\n' <<<"$EXTRA_TCP_PORTS" | awk 'NF')
+  fi
+
+  if [[ -n "$EXTRA_UDP_PORTS" ]]; then
+    local port
+    while read -r port; do
+      [[ -z "$port" ]] && continue
+      if [[ "$port" =~ ^[0-9]+$ ]]; then
+        (( port >= 1 && port <= 65535 )) || fail "Invalid extra UDP port: $port"
+        run_quiet ufw allow "${port}/udp" comment "Custom UDP"
+      elif [[ "$port" =~ ^[0-9]+:[0-9]+$ ]]; then
+        run_quiet ufw allow "${port}/udp" comment "Custom UDP range"
+      else
+        fail "Invalid extra UDP port or range: $port"
+      fi
+    done < <(tr ', ' '\n\n' <<<"$EXTRA_UDP_PORTS" | awk 'NF')
   fi
 
   run_quiet ufw logging medium
@@ -787,6 +935,7 @@ maybe_create_swap() {
 
 final_cleanup() {
   step "Cleaning package cache and removing obsolete packages..."
+  wait_for_apt_lock 120
   run_quiet apt-get autoremove -y
   run_quiet apt-get clean
 }
@@ -838,6 +987,8 @@ main() {
   configure_apt_behavior
   configure_timezone
   ensure_admin_user
+  ensure_root_ssh_key
+  configure_root_key_login
   configure_ssh
   configure_ufw
   configure_fail2ban
@@ -847,6 +998,7 @@ main() {
   configure_journald
   configure_monitoring_baseline
   configure_qemu_agent
+  configure_fish_shell
   maybe_create_swap
   final_cleanup
   show_completion
