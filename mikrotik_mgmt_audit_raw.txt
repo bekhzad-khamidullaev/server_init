@@ -1,0 +1,171 @@
+spawn ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no -p 2222 admin@192.168.88.254 /user print detail; /user group print detail; /ip neighbor discovery-settings print; /tool mac-server print; /tool mac-server mac-winbox print; /interface list print detail; /interface list member print detail; /system logging print detail; /ip settings print; /ip ssh print; /tool bandwidth-server print; /snmp print; /snmp community print detail; /ip cloud print; /ip dns print; /system ntp client print
+admin@192.168.88.254's password: 
+Flags: E - expired, X - disabled 
+ 0    ;;; system default user
+      name="admin" group=full address="" last-logged-in=mar/19/2026 07:27:25 
+
+ 1    name="dude" group=read address="" last-logged-in=mar/18/2026 02:43:12 
+
+ 2    name="sherzod" group=full address="" last-logged-in=jan/27/2026 17:00:56 
+
+ 3    name="bekhzad" group=full address="" last-logged-in=nov/24/2023 19:16:08 
+
+ 4  X name="mikrocata2selks" group=full address="" 
+      last-logged-in=apr/14/2024 10:02:07 
+
+ 5    name="prometheus" group=full address="" 
+      last-logged-in=mar/09/2026 13:01:48 
+
+ 0 name="read" policy=read,winbox,dude,!local,!telnet,!ssh,!ftp,!reboot,!write,
+       !policy,!test,!password,!web,!sniff,!sensitive,!api,!romon,!tikapp 
+   skin=default 
+
+ 1 name="write" policy=local,telnet,ssh,reboot,read,write,test,winbox,password,
+       web,sniff,sensitive,api,romon,tikapp,!ftp,!policy,!dude 
+   skin=default 
+
+ 2 name="full" policy=local,telnet,ssh,ftp,reboot,read,write,policy,test,winbox,
+       password,web,sniff,sensitive,api,romon,dude,tikapp 
+   skin=default 
+
+ 3 name="group1" policy=web,!local,!telnet,!ssh,!ftp,!reboot,!read,!write,
+       !policy,!test,!winbox,!password,!sniff,!sensitive,!api,!romon,!dude,
+       !tikapp 
+   skin=default 
+
+ 4 name="API" policy=read,api,!local,!telnet,!ssh,!ftp,!reboot,!write,!policy,
+       !test,!winbox,!password,!web,!sniff,!sensitive,!romon,!dude,!tikapp 
+   skin=default 
+
+   discover-interface-list: none
+  lldp-med-net-policy-vlan: disabled
+                  protocol: 
+
+  allowed-interface-list: all
+
+  allowed-interface-list: all
+
+Flags: * - builtin, D - dynamic 
+ 0 * ;;; contains all interfaces
+     name="all" dynamic=no include="" exclude="" 
+
+ 1 * ;;; contains no interfaces
+     name="none" dynamic=no include="" exclude="" 
+
+ 2 * ;;; contains dynamic interfaces
+     name="dynamic" dynamic=no include="" exclude="" 
+
+ 3 * ;;; contains static interfaces
+     name="static" dynamic=no include="" exclude="" 
+
+ 4   name="WAN_EAST" dynamic=no include="" exclude="" 
+
+ 5   name="LAN" dynamic=no include="" exclude="" 
+
+ 6   name="WAN" dynamic=no include="" exclude="" 
+
+ 7   name="WAN2" dynamic=no include="" exclude="" 
+
+ 8   name="WAN3" dynamic=no include="" exclude="" 
+
+Flags: X - disabled, D - dynamic 
+ 0   list=WAN_EAST interface=east_inet_br dynamic=no 
+
+ 1   list=LAN interface=lan_br dynamic=no 
+
+ 2   list=WAN interface=ut_inet_br1 dynamic=no 
+
+ 3   list=WAN2 interface=ut_inet_br2 dynamic=no 
+
+ 4   list=WAN3 interface=ut_inet_br3 dynamic=no 
+
+Flags: X - disabled, I - invalid, * - default 
+ 0  * topics=info prefix="" action=disk 
+
+ 1  * topics=error prefix="" action=disk 
+
+ 2  * topics=warning prefix="" action=disk 
+
+ 3  * topics=critical prefix="" action=disk 
+
+ 4    topics=radius prefix="" action=echo 
+
+ 5    topics=ovpn,info prefix="" action=memory 
+
+ 6    topics=ipsec prefix="" action=memory 
+
+              ip-forward: yes
+          send-redirects: yes
+     accept-source-route: yes
+        accept-redirects: yes
+        secure-redirects: yes
+               rp-filter: no
+          tcp-syncookies: no
+    max-neighbor-entries: 163840
+             arp-timeout: 30s
+         icmp-rate-limit: 10
+          icmp-rate-mask: 0x1818
+             route-cache: yes
+         allow-fast-path: yes
+   ipv4-fast-path-active: no
+  ipv4-fast-path-packets: 0
+    ipv4-fast-path-bytes: 0
+   ipv4-fasttrack-active: no
+  ipv4-fasttrack-packets: 0
+    ipv4-fasttrack-bytes: 0
+
+           forwarding-enabled: remote
+  always-allow-password-login: no
+                strong-crypto: no
+            allow-none-crypto: no
+                host-key-size: 2048
+
+                  enabled: no
+             authenticate: yes
+  allocate-udp-ports-from: 2000
+             max-sessions: 100
+
+          enabled: yes
+          contact: admin@evos.uz
+         location: INXA_DC
+        engine-id: 
+      trap-target: 
+   trap-community: t3sl@admin
+     trap-version: 2
+  trap-generators: temp-exception
+
+Flags: * - default, X - disabled 
+ 0 *  name="t3sl@admin" addresses=::/0 security=none read-access=yes 
+      write-access=no authentication-protocol=MD5 encryption-protocol=DES 
+      authentication-password="toorqwe1234r" 
+      encryption-password="toorqwe1234r" 
+
+ 1    name="puclic" addresses=::/0 security=none read-access=yes 
+      write-access=no authentication-protocol=MD5 encryption-protocol=DES 
+      authentication-password="" encryption-password="" 
+
+          ddns-enabled: no
+  ddns-update-interval: 1m
+           update-time: yes
+        public-address: 217.30.162.34
+
+                      servers: 8.8.8.8,1.1.1.1
+              dynamic-servers: 
+               use-doh-server: 
+              verify-doh-cert: no
+        allow-remote-requests: yes
+          max-udp-packet-size: 4096
+         query-server-timeout: 2s
+          query-total-timeout: 10s
+       max-concurrent-queries: 200
+  max-concurrent-tcp-sessions: 100
+                   cache-size: 2048KiB
+                cache-max-ttl: 1w
+                   cache-used: 161KiB
+
+           enabled: no
+       primary-ntp: 192.168.110.13
+     secondary-ntp: 0.0.0.0
+  server-dns-names: 
+              mode: unicast
+

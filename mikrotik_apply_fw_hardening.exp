@@ -1,0 +1,100 @@
+set timeout 120
+log_user 1
+spawn ssh -T -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no -p 2222 admin@192.168.88.254
+expect "*assword:*" { send "Bek@1427477\r" }
+expect "> "
+
+# Backups
+send "/export file=pre_fw_hardening_no_ip_limit_20260319\r"
+expect "> "
+send "/system backup save name=pre_fw_hardening_no_ip_limit_20260319\r"
+expect "> "
+
+# WAN_ALL list and members
+send ":if ([:len [/interface list find where name=\"WAN_ALL\"]] = 0) do={ /interface list add name=WAN_ALL }\r"
+expect "> "
+send ":if ([:len [/interface list member find where list=\"WAN_ALL\" and interface=\"east_inet_br\"]] = 0) do={ /interface list member add list=WAN_ALL interface=east_inet_br }\r"
+expect "> "
+send ":if ([:len [/interface list member find where list=\"WAN_ALL\" and interface=\"ut_inet_br1\"]] = 0) do={ /interface list member add list=WAN_ALL interface=ut_inet_br1 }\r"
+expect "> "
+send ":if ([:len [/interface list member find where list=\"WAN_ALL\" and interface=\"ut_inet_br2\"]] = 0) do={ /interface list member add list=WAN_ALL interface=ut_inet_br2 }\r"
+expect "> "
+send ":if ([:len [/interface list member find where list=\"WAN_ALL\" and interface=\"ut_inet_br3\"]] = 0) do={ /interface list member add list=WAN_ALL interface=ut_inet_br3 }\r"
+expect "> "
+
+# IP stack hardening
+send "/ip settings set tcp-syncookies=yes accept-source-route=no accept-redirects=no secure-redirects=no send-redirects=no rp-filter=loose\r"
+expect "> "
+
+# INPUT base rules
+send ":if ([:len [/ip firewall filter find where comment=\"INPUT established\"]] = 0) do={ /ip firewall filter add chain=input action=accept connection-state=established,related,untracked place-before=0 comment=\"INPUT established\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"INPUT invalid\"]] = 0) do={ /ip firewall filter add chain=input action=drop connection-state=invalid place-before=0 comment=\"INPUT invalid\" }\r"
+expect "> "
+
+# Mgmt allow from WAN (no IP limit)
+send ":if ([:len [/ip firewall filter find where comment=\"INPUT allow SSH/Winbox WAN\"]] = 0) do={ /ip firewall filter add chain=input action=accept protocol=tcp dst-port=2222,8291 in-interface-list=WAN_ALL place-before=0 comment=\"INPUT allow SSH/Winbox WAN\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"INPUT allow API-SSL WAN\"]] = 0) do={ /ip firewall filter add chain=input action=accept protocol=tcp dst-port=8729 in-interface-list=WAN_ALL place-before=0 comment=\"INPUT allow API-SSL WAN\" }\r"
+expect "> "
+
+# Bruteforce protection
+send ":if ([:len [/ip firewall filter find where comment=\"INPUT drop blacklisted mgmt\"]] = 0) do={ /ip firewall filter add chain=input action=drop src-address-list=MGMT_BLACKLIST place-before=0 comment=\"INPUT drop blacklisted mgmt\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"MGMT stage3->blacklist\"]] = 0) do={ /ip firewall filter add chain=input action=add-src-to-address-list protocol=tcp dst-port=2222,8291 in-interface-list=WAN_ALL connection-state=new src-address-list=MGMT_STAGE3 address-list=MGMT_BLACKLIST address-list-timeout=1d place-before=0 comment=\"MGMT stage3->blacklist\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"MGMT stage2->3\"]] = 0) do={ /ip firewall filter add chain=input action=add-src-to-address-list protocol=tcp dst-port=2222,8291 in-interface-list=WAN_ALL connection-state=new src-address-list=MGMT_STAGE2 address-list=MGMT_STAGE3 address-list-timeout=1m place-before=0 comment=\"MGMT stage2->3\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"MGMT stage1->2\"]] = 0) do={ /ip firewall filter add chain=input action=add-src-to-address-list protocol=tcp dst-port=2222,8291 in-interface-list=WAN_ALL connection-state=new src-address-list=MGMT_STAGE1 address-list=MGMT_STAGE2 address-list-timeout=1m place-before=0 comment=\"MGMT stage1->2\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"MGMT new->stage1\"]] = 0) do={ /ip firewall filter add chain=input action=add-src-to-address-list protocol=tcp dst-port=2222,8291 in-interface-list=WAN_ALL connection-state=new address-list=MGMT_STAGE1 address-list-timeout=1m place-before=0 comment=\"MGMT new->stage1\" }\r"
+expect "> "
+
+# IPsec allows
+send ":if ([:len [/ip firewall filter find where comment=\"INPUT IKE\"]] = 0) do={ /ip firewall filter add chain=input action=accept protocol=udp dst-port=500,4500,8805 place-before=0 comment=\"INPUT IKE\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"INPUT ESP\"]] = 0) do={ /ip firewall filter add chain=input action=accept protocol=ipsec-esp place-before=0 comment=\"INPUT ESP\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"INPUT AH\"]] = 0) do={ /ip firewall filter add chain=input action=accept protocol=ipsec-ah place-before=0 comment=\"INPUT AH\" }\r"
+expect "> "
+
+# Input default drop from WAN
+send ":if ([:len [/ip firewall filter find where comment=\"INPUT drop rest WAN\"]] = 0) do={ /ip firewall filter add chain=input action=drop in-interface-list=WAN_ALL place-before=0 comment=\"INPUT drop rest WAN\" }\r"
+expect "> "
+
+# Forward base rules
+send ":if ([:len [/ip firewall filter find where comment=\"FWD established\"]] = 0) do={ /ip firewall filter add chain=forward action=accept connection-state=established,related,untracked place-before=0 comment=\"FWD established\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"FWD invalid\"]] = 0) do={ /ip firewall filter add chain=forward action=drop connection-state=invalid place-before=0 comment=\"FWD invalid\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"FWD IPsec in\"]] = 0) do={ /ip firewall filter add chain=forward action=accept ipsec-policy=in,ipsec place-before=0 comment=\"FWD IPsec in\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"FWD IPsec out\"]] = 0) do={ /ip firewall filter add chain=forward action=accept ipsec-policy=out,ipsec place-before=0 comment=\"FWD IPsec out\" }\r"
+expect "> "
+send ":if ([:len [/ip firewall filter find where comment=\"FWD drop unsolicited WAN\"]] = 0) do={ /ip firewall filter add chain=forward action=drop in-interface-list=WAN_ALL connection-state=new connection-nat-state=!dstnat place-before=0 comment=\"FWD drop unsolicited WAN\" }\r"
+expect "> "
+
+# Enable raw blacklist rules if present
+send ":if ([:len [/ip firewall raw find where comment=\"IPS-drop_in_bad_traffic\"]] > 0) do={ /ip firewall raw enable [find where comment=\"IPS-drop_in_bad_traffic\"] }\r"
+expect "> "
+send ":if ([:len [/ip firewall raw find where comment=\"IPS-drop_out_bad_traffic\"]] > 0) do={ /ip firewall raw enable [find where comment=\"IPS-drop_out_bad_traffic\"] }\r"
+expect "> "
+
+# Remove dangerous trusted IP if present
+send ":if ([:len [/ip firewall address-list find where list=\"trusted-ips\" and address=\"0.0.0.0\"]] > 0) do={ /ip firewall address-list remove [find where list=\"trusted-ips\" and address=\"0.0.0.0\"] }\r"
+expect "> "
+
+# Post-checks
+send "/ip settings print\r"
+expect "> "
+send "/ip firewall filter print where comment~\"INPUT|FWD|MGMT\"\r"
+expect "> "
+send "/ip firewall raw print detail where comment~\"IPS-drop\"\r"
+expect "> "
+send "/ip firewall address-list print where list=trusted-ips and address=0.0.0.0\r"
+expect "> "
+send "/log print where topics~\"error|critical\"\r"
+expect "> "
+
+send "/quit\r"
+expect eof

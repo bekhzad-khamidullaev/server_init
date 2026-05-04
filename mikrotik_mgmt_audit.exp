@@ -1,0 +1,4 @@
+set timeout 40
+spawn ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no -p 2222 admin@192.168.88.254 "/user print detail; /user group print detail; /ip neighbor discovery-settings print; /tool mac-server print; /tool mac-server mac-winbox print; /interface list print detail; /interface list member print detail; /system logging print detail; /ip settings print; /ip ssh print; /tool bandwidth-server print; /snmp print; /snmp community print detail; /ip cloud print; /ip dns print; /system ntp client print"
+expect "*assword:*" { send "Bek@1427477\r" }
+expect eof

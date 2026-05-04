@@ -1,0 +1,3116 @@
+spawn ssh -o StrictHostKeyChecking=no -o PreferredAuthentications=password -o PubkeyAuthentication=no -p 2222 admin@192.168.88.254 /system identity print; /system resource print; /system package print; /ip address print detail; /ip route print detail where dst-address=0.0.0.0/0; /ip service print detail; /ip firewall filter print detail; /ip firewall nat print detail; /ip firewall mangle print detail; /ip firewall raw print detail; /ip firewall connection tracking print; /ip firewall address-list print detail; /interface ethernet print detail; /interface bridge print detail; /interface bridge port print detail; /interface vlan print detail; /log print where topics~"error|critical|warning"
+admin@192.168.88.254's password: 
+  name: DC-INXA
+
+             uptime: 22w6d20h10m29s
+            version: 6.49.17 (stable)
+         build-time: Aug/07/2024 11:47:14
+   factory-software: 6.45.9
+        free-memory: 930.5MiB
+       total-memory: 1024.0MiB
+                cpu: ARMv7
+          cpu-count: 4
+      cpu-frequency: 1400MHz
+           cpu-load: 2%
+     free-hdd-space: 88.6MiB
+    total-hdd-space: 128.3MiB
+  architecture-name: arm
+         board-name: RB1100AHx4
+           platform: MikroTik
+
+Flags: X - disabled 
+ #   NAME                    VERSION                    SCHEDULED              
+ 0   routeros-arm            6.49.17                                           
+ 1   system                  6.49.17                                           
+ 2 X ipv6                    6.49.17                                           
+ 3   wireless                6.49.17                                           
+ 4   hotspot                 6.49.17                                           
+ 5   mpls                    6.49.17                                           
+ 6   routing                 6.49.17                                           
+ 7   ppp                     6.49.17                                           
+ 8   dhcp                    6.49.17                                           
+ 9   security                6.49.17                                           
+10   advanced-tools          6.49.17                                           
+
+Flags: X - disabled, I - invalid, D - dynamic 
+ 0   ;;; :::::::::::LAN 192.168.88.0/24:::::::::::
+     address=192.168.88.254/24 network=192.168.88.0 interface=lan_br 
+     actual-interface=lan_br 
+
+ 1   ;;; :::::::::::EastT INET:::::::::::
+     address=217.30.162.34/24 network=217.30.162.0 interface=east_inet_br 
+     actual-interface=east_inet_br 
+
+ 2   ;;; :::::::::::EOIP tunnel address to ISTV:::::::::::
+     address=172.31.16.1/30 network=172.31.16.0 interface=INHA_RT_EOIP 
+     actual-interface=lan_br 
+
+ 3   ;;; :::::::::::EastT INET:::::::::::
+     address=94.141.76.162/24 network=94.141.76.0 interface=east_inet_br 
+     actual-interface=east_inet_br 
+
+ 4   address=217.30.170.244/24 network=217.30.170.0 interface=east_inet_br 
+     actual-interface=east_inet_br 
+
+ 5   address=213.230.65.131/28 network=213.230.65.128 interface=ut_inet_br1 
+     actual-interface=ut_inet_br1 
+
+ 6   ;;; :::::::::::TAS-IX only 194.93.24.41:::::::::::
+     address=194.93.24.41/28 network=194.93.24.32 interface=ut_inet_br3 
+     actual-interface=ut_inet_br3 
+
+ 7   ;;; :::::::::::UT INET 194.93.24.33/28:::::::::::
+     address=194.93.24.43/28 network=194.93.24.32 interface=ut_inet_br2 
+     actual-interface=ut_inet_br2 
+
+ 8   ;;; :::::::::::UT INET 194.93.24.33/28:::::::::::
+     address=194.93.24.44/28 network=194.93.24.32 interface=ut_inet_br2 
+     actual-interface=ut_inet_br2 
+
+ 9   ;;; :::::::::::UT INET 213.230.65.131:::::::::::
+     address=213.230.65.130/28 network=213.230.65.128 interface=ut_inet_br1 
+     actual-interface=ut_inet_br1 
+
+Flags: X - disabled, A - active, D - dynamic, 
+C - connect, S - static, r - rip, b - bgp, o - ospf, m - mme, 
+B - blackhole, U - unreachable, P - prohibit 
+ 0 A S  ;;; Route through WAN1
+        dst-address=0.0.0.0/0 gateway=213.230.65.129 
+        gateway-status=213.230.65.129 reachable via  ut_inet_br1 
+        check-gateway=ping distance=1 scope=30 target-scope=10 
+        routing-mark=wan1_route 
+
+ 1 A S  ;;; Route through WAN2
+        dst-address=0.0.0.0/0 gateway=194.93.24.33 
+        gateway-status=194.93.24.33 reachable via  ut_inet_br2 
+        check-gateway=ping distance=1 scope=30 target-scope=10 
+        routing-mark=wan2_route 
+
+ 2 A S  ;;; Route through WAN3
+        dst-address=0.0.0.0/0 gateway=194.93.24.33 
+        gateway-status=194.93.24.33 reachable via  ut_inet_br2 
+        check-gateway=ping distance=1 scope=30 target-scope=10 
+        routing-mark=wan3_route 
+
+ 3 A S  ;;; Route through WAN4
+        dst-address=0.0.0.0/0 gateway=217.30.162.1 
+        gateway-status=217.30.162.1 reachable via  east_inet_br 
+        check-gateway=ping distance=1 scope=30 target-scope=10 
+        routing-mark=wan4_route 
+
+ 4 A S  ;;; Default Route
+        dst-address=0.0.0.0/0 gateway=8.8.8.8 
+        gateway-status=8.8.8.8 recursive via 213.230.65.129 ut_inet_br1 
+        check-gateway=ping distance=1 scope=30 target-scope=10 
+
+Flags: X - disabled, I - invalid 
+ 0 XI name="telnet" port=2323 
+     address=91.234.218.1/32,91.234.218.3/32,91.234.218.2/32 
+
+ 1 XI name="ftp" port=21 address="" 
+
+ 2 XI name="www" port=9080 address=192.0.0.0/8,172.16.0.0/16 
+
+ 3   name="ssh" port=2222 address="" 
+
+ 4 XI name="www-ssl" port=443 address="" certificate=none tls-version=any 
+
+ 5 XI name="api" port=8728 address="" 
+
+ 6   name="winbox" port=8291 address="" 
+
+ 7   name="api-ssl" port=8729 
+     address=192.168.88.33/32,192.168.88.197/32,192.168.88.101/32 
+     certificate=none tls-version=any 
+
+Flags: X - disabled, I - invalid, D - dynamic 
+ 0    ;;; IKEv2 Bank
+      chain=input action=accept protocol=udp port=8805 
+
+ 1    ;;; IPsec ESP
+      chain=input action=accept protocol=ipsec-esp 
+
+ 2    ;;; IPsec AH
+      chain=input action=accept protocol=ipsec-ah 
+
+ 3    ;;; Bank  LAN via IPsec
+      chain=forward action=accept src-address=172.30.4.0/24 
+      dst-address=192.168.40.0/24 
+
+ 4    ;;; LAN -> Bank via IPsec
+      chain=forward action=accept src-address=192.168.88.0/24 
+      dst-address=172.30.4.0/24 
+
+ 5    ;;; Bank -> LAN via IPsec
+      chain=forward action=accept src-address=172.30.4.0/24 
+      dst-address=192.168.88.0/24 
+
+ 6    ;;; ALLOW IPsec IN
+      chain=forward action=accept ipsec-policy=in,ipsec 
+
+ 7    ;;; ALLOW IPsec OUT
+      chain=forward action=accept ipsec-policy=out,ipsec 
+
+ 8    ;;; LAN -> Bank via IPsec
+      chain=forward action=accept src-address=192.168.88.0/24 
+      dst-address=172.30.4.0/24 
+
+ 9    ;;; Bank -> LAN via IPsec
+      chain=forward action=accept src-address=172.30.4.0/24 
+      dst-address=192.168.88.0/24 
+
+10    chain=input action=drop protocol=udp dst-port=53 log=no log-prefix="" 
+
+11    chain=input action=drop protocol=tcp src-port="" dst-port=21 log=no 
+      log-prefix="" 
+
+12    chain=input action=drop protocol=tcp src-port="" dst-port=23 log=no 
+      log-prefix="" 
+
+13 X  chain=input action=drop protocol=tcp src-port="" dst-port=110 log=no 
+      log-prefix="" 
+
+14 X  chain=input action=drop protocol=tcp src-port="" dst-port=3389 log=no 
+      log-prefix="" 
+
+15 X  chain=input action=drop protocol=tcp src-port="" dst-port=143 log=no 
+      log-prefix="" 
+
+16 X  chain=input action=drop protocol=udp dst-port=53 log=no log-prefix="" 
+
+17 X  chain=input action=accept protocol=tcp in-interface-list=WAN_EAST 
+      dst-port=5166 log=no log-prefix="" 
+
+18    ;;; Protected - Port Scanners
+      chain=input action=drop src-address-list=Port Scanners log=no 
+      log-prefix="" 
+
+19    chain=input action=accept protocol=tcp dst-port=8291 log=no log-prefix="" 
+
+20    chain=input action=add-src-to-address-list protocol=tcp psd=21,3s,3,1 
+      address-list=Port Scanners address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+21    chain=input action=drop connection-state=invalid log=no log-prefix="" 
+
+22    chain=input action=drop connection-limit=3,32 protocol=tcp 
+      src-address-list=blacklist-ddos log=no log-prefix="" 
+
+23    chain=input action=add-src-to-address-list connection-limit=100,32 
+      protocol=tcp address-list=blacklist-ddos address-list-timeout=1h log=no 
+      log-prefix="" 
+
+24    ;;; DDoS Protect - SYN Flood
+      chain=forward action=jump jump-target=SYN-Protect tcp-flags=syn 
+      connection-state=new protocol=tcp log=no log-prefix="" 
+
+25    chain=input action=jump jump-target=SYN-Protect tcp-flags=syn 
+      connection-state=new protocol=tcp log=no log-prefix="" 
+
+26    chain=SYN-Protect action=return tcp-flags=syn connection-state=new 
+      protocol=tcp limit=500,5:packet log=no log-prefix="" 
+
+27    chain=SYN-Protect action=drop tcp-flags=syn connection-state=new 
+      protocol=tcp log=no log-prefix="" 
+
+28    ;;; Trusted local network
+      chain=forward action=add-src-to-address-list src-address=192.168.0.0/16 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+29    ;;; Trusted local network
+      chain=forward action=add-src-to-address-list src-address=195.158.21.58 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+30    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=213.230.65.130 
+      address-list=trusted-ips 
+
+31    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=172.16.0.0/16 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+32    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=194.93.24.44 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+33    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=194.93.24.43 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+34    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=194.93.24.41 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+35    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=217.30.170.244 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+36    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=217.30.162.34 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+37    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=213.230.65.131 
+      address-list=trusted-ips 
+
+38    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=95.46.80.0/28 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+39    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=31.135.213.56 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+40    ;;; Trusted IP
+      chain=forward action=add-src-to-address-list src-address=31.135.213.43 
+      address-list=trusted-ips address-list-timeout=none-dynamic log=no 
+      log-prefix="" 
+
+41    ;;; Go to detect-ddos chain
+      chain=forward action=jump jump-target=detect-ddos 
+
+42    ;;; Detection rule - Rate Limit
+      chain=detect-ddos action=return 
+      dst-limit=150,200,src-and-dst-addresses/24s log=no 
+      log-prefix="DDoS_limit" 
+
+43    ;;; Add target IP
+      chain=detect-ddos action=add-dst-to-address-list 
+      address-list=ddos-target address-list-timeout=10m log=no 
+      log-prefix="DDoS_target" 
+
+44    ;;; Add attacker IP
+      chain=detect-ddos action=add-src-to-address-list 
+      address-list=ddos-attackers address-list-timeout=10m log=no 
+      log-prefix="DDoS_attacker" 
+
+Flags: X - disabled, I - invalid, D - dynamic 
+ 0    ;;; IPsec to Bank: SNAT -> 192.168.40.5
+      chain=srcnat action=src-nat to-addresses=192.168.40.5 
+      src-address=192.168.88.0/24 dst-address=172.30.4.0/24 log=no 
+      log-prefix="" 
+
+ 1    chain=srcnat action=masquerade out-interface=ut_inet_br1 log=no 
+      log-prefix="" 
+
+ 2    chain=srcnat action=masquerade out-interface=ut_inet_br2 log=no 
+      log-prefix="" 
+
+ 3    chain=srcnat action=masquerade out-interface=ut_inet_br3 log=no 
+      log-prefix="" 
+
+ 4    chain=srcnat action=masquerade out-interface=east_inet_br log=no 
+      log-prefix="" 
+
+ 5    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=80 
+      protocol=tcp dst-address=213.230.65.131 in-interface=ut_inet_br1 
+      dst-port=80 log=no log-prefix="" 
+
+ 6 X  chain=dstnat action=dst-nat to-addresses=192.168.88.171 to-ports=22 
+      protocol=tcp dst-address=213.230.65.131 in-interface=ut_inet_br1 
+      dst-port=8080 log=no log-prefix="" 
+
+ 7    chain=dstnat action=dst-nat to-addresses=192.168.88.101 to-ports=5678 
+      protocol=tcp dst-address=213.230.65.131 in-interface=ut_inet_br1 
+      dst-port=5678 log=no log-prefix="" 
+
+ 8    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=443 
+      protocol=tcp dst-address=213.230.65.131 in-interface=ut_inet_br1 
+      dst-port=443 log=no log-prefix="" 
+
+ 9    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=80 
+      protocol=tcp dst-address=213.230.65.130 in-interface=ut_inet_br1 
+      dst-port=80 log=no log-prefix="" 
+
+10    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=80 
+      protocol=tcp dst-address=217.30.162.34 dst-port=80 log=no log-prefix="" 
+
+11    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=443 
+      protocol=tcp dst-address=213.230.65.130 in-interface=ut_inet_br1 
+      dst-port=443 log=no log-prefix="" 
+
+12    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=443 
+      protocol=tcp dst-address=217.30.162.34 dst-port=443 log=no 
+      log-prefix="" 
+
+13    ;;; Asterisk
+      chain=dstnat action=dst-nat to-addresses=192.168.88.171 to-ports=3478 
+      protocol=tcp dst-address=194.93.24.44 dst-port=3478 log=no 
+      log-prefix="" 
+
+14    ;;; Asterisk
+      chain=dstnat action=dst-nat to-addresses=192.168.88.171 to-ports=3478 
+      protocol=tcp dst-address=213.230.65.130 dst-port=3478 log=no 
+      log-prefix="" 
+
+15    chain=dstnat action=dst-nat to-addresses=192.168.88.171 to-ports=3478 
+      protocol=udp dst-address=213.230.65.130 dst-port=3478 log=no 
+      log-prefix="" 
+
+16 X  chain=dstnat action=dst-nat to-addresses=192.168.88.250 to-ports=22 
+      protocol=tcp dst-address=213.230.65.130 dst-port=2222 log=no 
+      log-prefix="" 
+
+17    chain=dstnat action=dst-nat to-addresses=192.168.88.171 to-ports=3478 
+      protocol=tcp dst-address=217.30.162.34 dst-port=3478 log=no 
+      log-prefix="" 
+
+18    chain=dstnat action=dst-nat to-addresses=192.168.88.171 to-ports=3478 
+      protocol=udp dst-address=194.93.24.44 dst-port=3478 log=no 
+      log-prefix="" 
+
+19    chain=dstnat action=dst-nat to-addresses=192.168.88.171 to-ports=3478 
+      protocol=udp dst-address=217.30.162.34 dst-port=3478 log=no 
+      log-prefix="" 
+
+20    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=80 
+      protocol=tcp dst-address=194.93.24.44 dst-port=80 log=no log-prefix="" 
+
+21    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=443 
+      protocol=tcp dst-address=194.93.24.44 dst-port=443 log=no log-prefix="" 
+
+22 X  ;;; Resolver ns2
+      chain=dstnat action=dst-nat to-addresses=192.168.88.101 to-ports=53 
+      protocol=udp dst-address=194.93.24.41 dst-port=53 log=no log-prefix="" 
+
+23 X  ;;; port forward for test psql
+      chain=dstnat action=dst-nat to-addresses=192.168.88.104 to-ports=5432 
+      protocol=tcp dst-address=194.93.24.41 dst-port=443 log=no log-prefix="" 
+
+24    ;;; backup wan
+      chain=dstnat action=dst-nat to-addresses=192.168.88.171 to-ports=3478 
+      protocol=tcp dst-address=217.30.170.244 in-interface=east_inet_br 
+      dst-port=3478 log=no log-prefix="" 
+
+25    chain=dstnat action=dst-nat to-addresses=192.168.88.171 to-ports=3478 
+      protocol=udp dst-address=217.30.170.244 in-interface=east_inet_br 
+      dst-port=3478 log=no log-prefix="" 
+
+26    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=443 
+      protocol=tcp dst-address=217.30.170.244 in-interface=east_inet_br 
+      dst-port=443 log=no log-prefix="" 
+
+27    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=80 
+      protocol=tcp dst-address=217.30.170.244 in-interface=east_inet_br 
+      dst-port=80 log=no log-prefix="" 
+
+28    ;;; TGBot
+      chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=443 
+      protocol=tcp dst-address=217.30.162.34 in-interface=east_inet_br 
+      dst-port=443 log=no log-prefix="" 
+
+29    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=80 
+      protocol=tcp dst-address=217.30.162.34 in-interface=east_inet_br 
+      dst-port=80 log=no log-prefix="" 
+
+30    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=443 
+      protocol=tcp dst-address=194.93.24.43 in-interface=ut_inet_br2 
+      dst-port=443 log=no log-prefix="" 
+
+31    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=80 
+      protocol=tcp dst-address=194.93.24.43 in-interface=ut_inet_br2 
+      dst-port=80 log=no log-prefix="" 
+
+32 X  ;;; Postgresql
+      chain=dstnat action=dst-nat to-addresses=192.168.88.129 to-ports=5432 
+      protocol=tcp dst-address=217.30.162.34 in-interface=east_inet_br 
+      dst-port=18989 log=no log-prefix="" 
+
+33 X  chain=dstnat action=dst-nat to-addresses=192.168.88.129 to-ports=5432 
+      protocol=tcp dst-address=194.93.24.43 in-interface=ut_inet_br2 
+      dst-port=18989 log=no log-prefix="" 
+
+34 X  ;;; LightManager
+      chain=dstnat action=dst-nat to-addresses=192.168.88.100 to-ports=5651 
+      protocol=tcp dst-address=217.30.162.34 in-interface=east_inet_br 
+      dst-port=5651 log=no log-prefix="" 
+
+35 X  chain=dstnat action=dst-nat to-addresses=192.168.88.100 to-ports=5651 
+      protocol=tcp dst-address=194.93.24.43 in-interface=ut_inet_br2 
+      dst-port=5651 log=no log-prefix="" 
+
+36    ;;; APP
+      chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=443 
+      protocol=tcp dst-address=94.141.76.162 in-interface=east_inet_br 
+      dst-port=443 log=no log-prefix="" 
+
+37    chain=dstnat action=dst-nat to-addresses=192.168.88.189 to-ports=80 
+      protocol=tcp dst-address=94.141.76.162 in-interface=east_inet_br 
+      dst-port=80 log=no log-prefix="" 
+
+38    chain=dstnat action=dst-nat to-addresses=192.168.88.170 to-ports=1881 
+      protocol=tcp dst-address=94.141.76.162 in-interface=east_inet_br 
+      dst-port=1881 log=no log-prefix="" 
+
+39    chain=dstnat action=accept log=no log-prefix="" 
+
+Flags: X - disabled, I - invalid, D - dynamic 
+ 0    ;;; Mark WAN1 Connections
+      chain=input action=mark-connection new-connection-mark=wan1_conn 
+      in-interface=ut_inet_br1 
+
+ 1    ;;; Mark WAN2 Connections
+      chain=input action=mark-connection new-connection-mark=wan2_conn 
+      in-interface=ut_inet_br2 
+
+ 2    ;;; Mark WAN3 Connections
+      chain=input action=mark-connection new-connection-mark=wan3_conn 
+      in-interface=ut_inet_br3 
+
+ 3    ;;; Mark WAN4 Connections
+      chain=input action=mark-connection new-connection-mark=wan4_conn 
+      passthrough=yes in-interface=east_inet_br log=no log-prefix="" 
+
+ 4    ;;; Mark Route for WAN1 Connections
+      chain=output action=mark-routing new-routing-mark=wan1_route 
+      passthrough=no connection-mark=wan1_conn 
+
+ 5    ;;; Mark Route for WAN2 Connections
+      chain=output action=mark-routing new-routing-mark=wan2_route 
+      passthrough=no connection-mark=wan2_conn 
+
+ 6    ;;; Mark Route for WAN3 Connections
+      chain=output action=mark-routing new-routing-mark=wan3_route 
+      passthrough=no connection-mark=wan3_conn 
+
+ 7    ;;; Mark Route for WAN4 Connections
+      chain=output action=mark-routing new-routing-mark=wan4_route 
+      passthrough=no connection-mark=wan4_conn 
+
+ 8 X  ;;; Route 92.53.68.17 via east_inet_br
+      chain=prerouting action=mark-routing new-routing-mark=to-east 
+      passthrough=no dst-address=92.53.68.17 log=no log-prefix="" 
+
+ 9 X  chain=forward action=change-mss new-mss=1350 passthrough=yes 
+      tcp-flags=syn protocol=tcp dst-address=185.65.148.157 log=no 
+      log-prefix="" 
+
+10    ;;; Clamp TCP MSS
+      chain=forward action=change-mss new-mss=1350 passthrough=yes 
+      tcp-flags=syn protocol=tcp dst-address=185.65.148.157 
+      out-interface=ut_inet_br1 log=no log-prefix="" 
+
+11    ;;; Fix MSS for IPsec (LAN -> Bank)
+      chain=forward action=change-mss new-mss=1360 tcp-flags=syn protocol=tcp 
+      src-address=192.168.88.0/24 dst-address=172.30.4.0/24 
+
+Flags: X - disabled, I - invalid, D - dynamic 
+ 0 X  ;;; IPS-drop_in_bad_traffic
+      chain=prerouting action=drop log=no log-prefix="" 
+      src-address-list=blacklist-ddos 
+
+ 1 X  ;;; IPS-drop_out_bad_traffic
+      chain=prerouting action=drop log=no log-prefix="" 
+      dst-address-list=blacklist-ddos 
+
+ 2    ;;; Allow trusted IP to bypass the DDoS filter
+      chain=prerouting action=accept src-address-list=trusted-ips 
+
+ 3    chain=prerouting action=accept log=no log-prefix="" 
+      src-address-list=TAS-IX 
+
+ 4    ;;; Drop detected attackers
+      chain=prerouting action=drop log=yes log-prefix="DDoS_drop" 
+      src-address-list=ddos-attackers dst-address-list=ddos-target 
+
+                   enabled: yes
+      tcp-syn-sent-timeout: 5s
+  tcp-syn-received-timeout: 5s
+   tcp-established-timeout: 1d
+      tcp-fin-wait-timeout: 10s
+    tcp-close-wait-timeout: 10s
+      tcp-last-ack-timeout: 10s
+     tcp-time-wait-timeout: 10s
+         tcp-close-timeout: 10s
+   tcp-max-retrans-timeout: 5m
+       tcp-unacked-timeout: 5m
+        loose-tcp-tracking: yes
+               udp-timeout: 10s
+        udp-stream-timeout: 3m
+              icmp-timeout: 10s
+           generic-timeout: 10m
+               max-entries: 1017904
+             total-entries: 5429
+
+Flags: X - disabled, D - dynamic 
+ 0   list=trusted-ips address=0.0.0.0 creation-time=jan/17/2025 08:03:04 
+
+ 1   ;;; White list for TAS-IX
+     list=TAS-IX address=192.168.88.0/24 creation-time=jan/17/2025 10:17:10 
+
+ 2   list=TAS-IX address=217.30.160.0/20 creation-time=jan/17/2025 10:17:11 
+
+ 3   list=TAS-IX address=217.29.112.0/20 creation-time=jan/17/2025 10:17:11 
+
+ 4   list=TAS-IX address=217.12.88.0/23 creation-time=jan/17/2025 10:17:11 
+
+ 5   list=TAS-IX address=217.12.80.0/21 creation-time=jan/17/2025 10:17:11 
+
+ 6   list=TAS-IX address=213.232.245.0/24 creation-time=jan/17/2025 10:17:11 
+
+ 7   list=TAS-IX address=213.232.225.0/24 creation-time=jan/17/2025 10:17:11 
+
+ 8   list=TAS-IX address=213.230.64.0/18 creation-time=jan/17/2025 10:17:11 
+
+ 9   list=TAS-IX address=213.206.32.0/19 creation-time=jan/17/2025 10:17:11 
+
+10   list=TAS-IX address=213.148.28.0/22 creation-time=jan/17/2025 10:17:11 
+
+11   list=TAS-IX address=213.148.20.0/22 creation-time=jan/17/2025 10:17:11 
+
+12   list=TAS-IX address=213.148.18.0/23 creation-time=jan/17/2025 10:17:11 
+
+13   list=TAS-IX address=212.115.112.0/22 creation-time=jan/17/2025 10:17:11 
+
+14   list=TAS-IX address=202.79.184.0/21 creation-time=jan/17/2025 10:17:11 
+
+15   list=TAS-IX address=198.163.192.0/20 creation-time=jan/17/2025 10:17:11 
+
+16   list=TAS-IX address=195.211.180.0/22 creation-time=jan/17/2025 10:17:11 
+
+17   list=TAS-IX address=195.158.0.0/19 creation-time=jan/17/2025 10:17:11 
+
+18   list=TAS-IX address=195.88.214.0/23 creation-time=jan/17/2025 10:17:11 
+
+19   list=TAS-IX address=194.213.16.0/24 creation-time=jan/17/2025 10:17:11 
+
+20   list=TAS-IX address=194.93.24.0/22 creation-time=jan/17/2025 10:17:11 
+
+21   list=TAS-IX address=194.76.15.0/24 creation-time=jan/17/2025 10:17:11 
+
+22   list=TAS-IX address=194.55.92.0/22 creation-time=jan/17/2025 10:17:11 
+
+23   list=TAS-IX address=194.32.99.0/24 creation-time=jan/17/2025 10:17:11 
+
+24   list=TAS-IX address=194.31.111.0/24 creation-time=jan/17/2025 10:17:11 
+
+25   list=TAS-IX address=193.222.110.0/24 creation-time=jan/17/2025 10:17:11 
+
+26   list=TAS-IX address=193.107.16.0/22 creation-time=jan/17/2025 10:17:11 
+
+27   list=TAS-IX address=193.104.179.0/24 creation-time=jan/17/2025 10:17:11 
+
+28   list=TAS-IX address=192.166.228.0/22 creation-time=jan/17/2025 10:17:11 
+
+29   list=TAS-IX address=188.113.224.0/19 creation-time=jan/17/2025 10:17:11 
+
+30   list=TAS-IX address=188.113.221.0/24 creation-time=jan/17/2025 10:17:11 
+
+31   list=TAS-IX address=188.113.216.0/22 creation-time=jan/17/2025 10:17:11 
+
+32   list=TAS-IX address=188.113.208.0/21 creation-time=jan/17/2025 10:17:11 
+
+33   list=TAS-IX address=188.113.192.0/20 creation-time=jan/17/2025 10:17:11 
+
+34   list=TAS-IX address=185.248.44.0/22 creation-time=jan/17/2025 10:17:12 
+
+35   list=TAS-IX address=185.239.152.0/24 creation-time=jan/17/2025 10:17:12 
+
+36   list=TAS-IX address=185.234.113.0/24 creation-time=jan/17/2025 10:17:12 
+
+37   list=TAS-IX address=185.231.66.0/24 creation-time=jan/17/2025 10:17:12 
+
+38   list=TAS-IX address=185.230.204.0/22 creation-time=jan/17/2025 10:17:12 
+
+39   list=TAS-IX address=185.228.88.0/22 creation-time=jan/17/2025 10:17:12 
+
+40   list=TAS-IX address=185.224.219.0/24 creation-time=jan/17/2025 10:17:12 
+
+41   list=TAS-IX address=185.217.131.0/24 creation-time=jan/17/2025 10:17:12 
+
+42   list=TAS-IX address=185.215.5.0/24 creation-time=jan/17/2025 10:17:12 
+
+43   list=TAS-IX address=185.213.230.0/23 creation-time=jan/17/2025 10:17:12 
+
+44   list=TAS-IX address=185.213.229.0/24 creation-time=jan/17/2025 10:17:12 
+
+45   list=TAS-IX address=185.211.128.0/22 creation-time=jan/17/2025 10:17:12 
+
+46   list=TAS-IX address=185.208.176.0/22 creation-time=jan/17/2025 10:17:12 
+
+47   list=TAS-IX address=185.203.236.0/22 creation-time=jan/17/2025 10:17:12 
+
+48   list=TAS-IX address=185.196.216.0/22 creation-time=jan/17/2025 10:17:12 
+
+49   list=TAS-IX address=185.196.212.0/22 creation-time=jan/17/2025 10:17:12 
+
+50   list=TAS-IX address=185.183.240.0/22 creation-time=jan/17/2025 10:17:12 
+
+51   list=TAS-IX address=185.178.51.0/24 creation-time=jan/17/2025 10:17:12 
+
+52   list=TAS-IX address=185.166.255.0/24 creation-time=jan/17/2025 10:17:12 
+
+53   list=TAS-IX address=185.163.24.0/22 creation-time=jan/17/2025 10:17:12 
+
+54   list=TAS-IX address=185.139.136.0/22 creation-time=jan/17/2025 10:17:12 
+
+55   list=TAS-IX address=185.100.52.0/22 creation-time=jan/17/2025 10:17:12 
+
+56   list=TAS-IX address=185.76.12.0/22 creation-time=jan/17/2025 10:17:12 
+
+57   list=TAS-IX address=185.74.102.0/23 creation-time=jan/17/2025 10:17:12 
+
+58   list=TAS-IX address=185.74.4.0/22 creation-time=jan/17/2025 10:17:12 
+
+59   list=TAS-IX address=185.65.203.0/24 creation-time=jan/17/2025 10:17:12 
+
+60   list=TAS-IX address=185.63.224.0/22 creation-time=jan/17/2025 10:17:12 
+
+61   list=TAS-IX address=185.8.212.0/23 creation-time=jan/17/2025 10:17:12 
+
+62   list=TAS-IX address=185.6.40.0/22 creation-time=jan/17/2025 10:17:12 
+
+63   list=TAS-IX address=185.4.160.0/22 creation-time=jan/17/2025 10:17:12 
+
+64   list=TAS-IX address=178.218.200.0/21 creation-time=jan/17/2025 10:17:12 
+
+65   list=TAS-IX address=178.216.128.0/21 creation-time=jan/17/2025 10:17:12 
+
+66   list=TAS-IX address=176.221.28.0/23 creation-time=jan/17/2025 10:17:12 
+
+67   list=TAS-IX address=176.221.24.0/23 creation-time=jan/17/2025 10:17:12 
+
+68   list=TAS-IX address=176.96.254.0/24 creation-time=jan/17/2025 10:17:12 
+
+69   list=TAS-IX address=176.96.243.0/24 creation-time=jan/17/2025 10:17:12 
+
+70   list=TAS-IX address=176.96.241.0/24 creation-time=jan/17/2025 10:17:12 
+
+71   list=TAS-IX address=176.96.236.0/24 creation-time=jan/17/2025 10:17:12 
+
+72   list=TAS-IX address=146.158.94.0/24 creation-time=jan/17/2025 10:17:12 
+
+73   list=TAS-IX address=146.158.68.0/22 creation-time=jan/17/2025 10:17:12 
+
+74   list=TAS-IX address=146.158.28.0/23 creation-time=jan/17/2025 10:17:12 
+
+75   list=TAS-IX address=146.158.16.0/21 creation-time=jan/17/2025 10:17:12 
+
+76   list=TAS-IX address=146.158.15.0/24 creation-time=jan/17/2025 10:17:12 
+
+77   list=TAS-IX address=146.120.240.0/24 creation-time=jan/17/2025 10:17:12 
+
+78   list=TAS-IX address=146.120.232.0/23 creation-time=jan/17/2025 10:17:12 
+
+79   list=TAS-IX address=146.120.16.0/22 creation-time=jan/17/2025 10:17:12 
+
+80   list=TAS-IX address=139.28.44.0/22 creation-time=jan/17/2025 10:17:12 
+
+81   list=TAS-IX address=119.12.104.0/21 creation-time=jan/17/2025 10:17:12 
+
+82   list=TAS-IX address=118.88.16.0/21 creation-time=jan/17/2025 10:17:12 
+
+83   list=TAS-IX address=109.248.220.0/23 creation-time=jan/17/2025 10:17:12 
+
+84   list=TAS-IX address=109.207.254.0/23 creation-time=jan/17/2025 10:17:12 
+
+85   list=TAS-IX address=109.207.253.0/24 creation-time=jan/17/2025 10:17:12 
+
+86   list=TAS-IX address=109.207.240.0/22 creation-time=jan/17/2025 10:17:12 
+
+87   list=TAS-IX address=109.94.174.0/24 creation-time=jan/17/2025 10:17:12 
+
+88   list=TAS-IX address=109.94.172.0/24 creation-time=jan/17/2025 10:17:12 
+
+89   list=TAS-IX address=95.214.208.0/22 creation-time=jan/17/2025 10:17:12 
+
+90   list=TAS-IX address=95.172.142.0/24 creation-time=jan/17/2025 10:17:12 
+
+91   list=TAS-IX address=95.130.227.0/24 creation-time=jan/17/2025 10:17:12 
+
+92   list=TAS-IX address=95.47.238.0/23 creation-time=jan/17/2025 10:17:12 
+
+93   list=TAS-IX address=95.47.153.0/24 creation-time=jan/17/2025 10:17:12 
+
+94   list=TAS-IX address=95.47.127.0/24 creation-time=jan/17/2025 10:17:12 
+
+95   list=TAS-IX address=95.47.124.0/23 creation-time=jan/17/2025 10:17:12 
+
+96   list=TAS-IX address=95.47.120.0/23 creation-time=jan/17/2025 10:17:12 
+
+97   list=TAS-IX address=95.46.100.0/22 creation-time=jan/17/2025 10:17:12 
+
+98   list=TAS-IX address=95.46.96.0/24 creation-time=jan/17/2025 10:17:12 
+
+99   list=TAS-IX address=95.46.80.0/20 creation-time=jan/17/2025 10:17:12 
+
+100   list=TAS-IX address=95.46.64.0/21 creation-time=jan/17/2025 10:17:12 
+
+101   list=TAS-IX address=94.232.24.0/22 creation-time=jan/17/2025 10:17:12 
+
+102   list=TAS-IX address=94.230.224.0/20 creation-time=jan/17/2025 10:17:12 
+
+103   list=TAS-IX address=94.158.48.0/20 creation-time=jan/17/2025 10:17:12 
+
+104   list=TAS-IX address=94.141.64.0/19 creation-time=jan/17/2025 10:17:12 
+
+105   list=TAS-IX address=93.188.80.0/21 creation-time=jan/17/2025 10:17:12 
+
+106   list=TAS-IX address=93.171.238.0/24 creation-time=jan/17/2025 10:17:12 
+
+107   list=TAS-IX address=93.171.232.0/22 creation-time=jan/17/2025 10:17:12 
+
+108   list=TAS-IX address=93.171.226.0/24 creation-time=jan/17/2025 10:17:12 
+
+109   list=TAS-IX address=93.171.210.0/23 creation-time=jan/17/2025 10:17:12 
+
+110   list=TAS-IX address=93.171.188.0/22 creation-time=jan/17/2025 10:17:12 
+
+111   list=TAS-IX address=93.170.220.0/22 creation-time=jan/17/2025 10:17:12 
+
+112   list=TAS-IX address=93.170.208.0/22 creation-time=jan/17/2025 10:17:12 
+
+113   list=TAS-IX address=93.170.168.0/23 creation-time=jan/17/2025 10:17:12 
+
+114   list=TAS-IX address=93.170.160.0/22 creation-time=jan/17/2025 10:17:12 
+
+115   list=TAS-IX address=93.170.102.0/24 creation-time=jan/17/2025 10:17:13 
+
+116   list=TAS-IX address=93.170.16.0/21 creation-time=jan/17/2025 10:17:13 
+
+117   list=TAS-IX address=93.170.10.0/23 creation-time=jan/17/2025 10:17:13 
+
+118   list=TAS-IX address=93.170.6.0/24 creation-time=jan/17/2025 10:17:13 
+
+119   list=TAS-IX address=93.157.58.0/24 creation-time=jan/17/2025 10:17:13 
+
+120   list=TAS-IX address=92.253.202.0/24 creation-time=jan/17/2025 10:17:13 
+
+121   list=TAS-IX address=92.253.192.0/21 creation-time=jan/17/2025 10:17:13 
+
+122   list=TAS-IX address=92.63.204.0/22 creation-time=jan/17/2025 10:17:13 
+
+123   list=TAS-IX address=92.38.52.0/22 creation-time=jan/17/2025 10:17:13 
+
+124   list=TAS-IX address=92.38.50.0/23 creation-time=jan/17/2025 10:17:13 
+
+125   list=TAS-IX address=92.38.39.0/24 creation-time=jan/17/2025 10:17:13 
+
+126   list=TAS-IX address=92.38.24.0/22 creation-time=jan/17/2025 10:17:13 
+
+127   list=TAS-IX address=92.38.16.0/22 creation-time=jan/17/2025 10:17:13 
+
+128   list=TAS-IX address=92.38.8.0/21 creation-time=jan/17/2025 10:17:13 
+
+129   list=TAS-IX address=92.38.5.0/24 creation-time=jan/17/2025 10:17:13 
+
+130   list=TAS-IX address=91.240.128.0/24 creation-time=jan/17/2025 10:17:13 
+
+131   list=TAS-IX address=91.240.12.0/22 creation-time=jan/17/2025 10:17:13 
+
+132   list=TAS-IX address=91.234.218.0/23 creation-time=jan/17/2025 10:17:13 
+
+133   list=TAS-IX address=91.231.56.0/22 creation-time=jan/17/2025 10:17:13 
+
+134   list=TAS-IX address=91.229.164.0/23 creation-time=jan/17/2025 10:17:13 
+
+135   list=TAS-IX address=91.229.160.0/22 creation-time=jan/17/2025 10:17:13 
+
+136   list=TAS-IX address=91.213.99.0/24 creation-time=jan/17/2025 10:17:13 
+
+137   list=TAS-IX address=91.213.31.0/24 creation-time=jan/17/2025 10:17:13 
+
+138   list=TAS-IX address=91.212.124.0/24 creation-time=jan/17/2025 10:17:13 
+
+139   list=TAS-IX address=91.212.89.0/24 creation-time=jan/17/2025 10:17:13 
+
+140   list=TAS-IX address=91.204.236.0/22 creation-time=jan/17/2025 10:17:13 
+
+141   list=TAS-IX address=91.203.172.0/22 creation-time=jan/17/2025 10:17:13 
+
+142   list=TAS-IX address=91.196.76.0/22 creation-time=jan/17/2025 10:17:13 
+
+143   list=TAS-IX address=91.190.159.0/24 creation-time=jan/17/2025 10:17:13 
+
+144   list=TAS-IX address=91.188.128.0/19 creation-time=jan/17/2025 10:17:13 
+
+145   list=TAS-IX address=91.90.216.0/22 creation-time=jan/17/2025 10:17:13 
+
+146   list=TAS-IX address=90.156.192.0/21 creation-time=jan/17/2025 10:17:13 
+
+147   list=TAS-IX address=90.156.160.0/21 creation-time=jan/17/2025 10:17:13 
+
+148   list=TAS-IX address=89.249.60.0/22 creation-time=jan/17/2025 10:17:13 
+
+149   list=TAS-IX address=89.236.192.0/18 creation-time=jan/17/2025 10:17:13 
+
+150   list=TAS-IX address=89.232.184.0/22 creation-time=jan/17/2025 10:17:13 
+
+151   list=TAS-IX address=89.223.3.0/24 creation-time=jan/17/2025 10:17:13 
+
+152   list=TAS-IX address=89.104.102.0/24 creation-time=jan/17/2025 10:17:13 
+
+153   list=TAS-IX address=87.237.232.0/21 creation-time=jan/17/2025 10:17:13 
+
+154   list=TAS-IX address=86.62.0.0/22 creation-time=jan/17/2025 10:17:13 
+
+155   list=TAS-IX address=84.54.120.0/22 creation-time=jan/17/2025 10:17:13 
+
+156   list=TAS-IX address=84.54.118.0/23 creation-time=jan/17/2025 10:17:13 
+
+157   list=TAS-IX address=84.54.114.0/23 creation-time=jan/17/2025 10:17:13 
+
+158   list=TAS-IX address=84.54.113.0/24 creation-time=jan/17/2025 10:17:13 
+
+159   list=TAS-IX address=84.54.98.0/24 creation-time=jan/17/2025 10:17:13 
+
+160   list=TAS-IX address=84.54.96.0/23 creation-time=jan/17/2025 10:17:13 
+
+161   list=TAS-IX address=84.54.64.0/19 creation-time=jan/17/2025 10:17:13 
+
+162   list=TAS-IX address=83.222.6.0/23 creation-time=jan/17/2025 10:17:13 
+
+163   list=TAS-IX address=83.221.176.0/20 creation-time=jan/17/2025 10:17:13 
+
+164   list=TAS-IX address=83.221.168.0/21 creation-time=jan/17/2025 10:17:13 
+
+165   list=TAS-IX address=83.221.164.0/24 creation-time=jan/17/2025 10:17:13 
+
+166   list=TAS-IX address=83.221.163.0/24 creation-time=jan/17/2025 10:17:13 
+
+167   list=TAS-IX address=83.221.160.0/23 creation-time=jan/17/2025 10:17:13 
+
+168   list=TAS-IX address=83.69.128.0/19 creation-time=jan/17/2025 10:17:13 
+
+169   list=TAS-IX address=82.215.96.0/20 creation-time=jan/17/2025 10:17:13 
+
+170   list=TAS-IX address=82.148.0.0/21 creation-time=jan/17/2025 10:17:13 
+
+171   list=TAS-IX address=80.80.216.0/21 creation-time=jan/17/2025 10:17:13 
+
+172   list=TAS-IX address=80.80.212.0/22 creation-time=jan/17/2025 10:17:13 
+
+173   list=TAS-IX address=80.80.211.0/24 creation-time=jan/17/2025 10:17:13 
+
+174   list=TAS-IX address=80.80.208.0/23 creation-time=jan/17/2025 10:17:13 
+
+175   list=TAS-IX address=77.83.56.0/24 creation-time=jan/17/2025 10:17:13 
+
+176   list=TAS-IX address=62.209.128.0/19 creation-time=jan/17/2025 10:17:13 
+
+177   list=TAS-IX address=46.255.68.0/23 creation-time=jan/17/2025 10:17:13 
+
+178   list=TAS-IX address=46.255.64.0/22 creation-time=jan/17/2025 10:17:13 
+
+179   list=TAS-IX address=46.227.120.0/21 creation-time=jan/17/2025 10:17:13 
+
+180   list=TAS-IX address=46.8.235.0/24 creation-time=jan/17/2025 10:17:13 
+
+181   list=TAS-IX address=46.8.72.0/22 creation-time=jan/17/2025 10:17:13 
+
+182   list=TAS-IX address=46.8.35.0/24 creation-time=jan/17/2025 10:17:13 
+
+183   list=TAS-IX address=45.153.66.0/23 creation-time=jan/17/2025 10:17:13 
+
+184   list=TAS-IX address=45.150.24.0/22 creation-time=jan/17/2025 10:17:13 
+
+185   list=TAS-IX address=45.147.253.0/24 creation-time=jan/17/2025 10:17:13 
+
+186   list=TAS-IX address=45.144.40.0/23 creation-time=jan/17/2025 10:17:13 
+
+187   list=TAS-IX address=45.138.158.0/24 creation-time=jan/17/2025 10:17:13 
+
+188   list=TAS-IX address=45.134.216.0/22 creation-time=jan/17/2025 10:17:13 
+
+189   list=TAS-IX address=45.130.148.0/24 creation-time=jan/17/2025 10:17:13 
+
+190   list=TAS-IX address=45.92.173.0/24 creation-time=jan/17/2025 10:17:14 
+
+191   list=TAS-IX address=45.91.220.0/22 creation-time=jan/17/2025 10:17:14 
+
+192   list=TAS-IX address=45.9.228.0/22 creation-time=jan/17/2025 10:17:14 
+
+193   list=TAS-IX address=37.140.216.0/24 creation-time=jan/17/2025 10:17:14 
+
+194   list=TAS-IX address=37.110.208.0/21 creation-time=jan/17/2025 10:17:14 
+
+195   list=TAS-IX address=31.148.240.0/22 creation-time=jan/17/2025 10:17:14 
+
+196   list=TAS-IX address=31.148.208.0/22 creation-time=jan/17/2025 10:17:14 
+
+197   list=TAS-IX address=31.148.198.0/24 creation-time=jan/17/2025 10:17:14 
+
+198   list=TAS-IX address=31.148.196.0/23 creation-time=jan/17/2025 10:17:14 
+
+199   list=TAS-IX address=31.148.175.0/24 creation-time=jan/17/2025 10:17:14 
+
+200   list=TAS-IX address=31.148.170.0/24 creation-time=jan/17/2025 10:17:14 
+
+201   list=TAS-IX address=31.148.160.0/21 creation-time=jan/17/2025 10:17:14 
+
+202   list=TAS-IX address=31.148.144.0/22 creation-time=jan/17/2025 10:17:14 
+
+203   list=TAS-IX address=31.148.100.0/22 creation-time=jan/17/2025 10:17:14 
+
+204   list=TAS-IX address=31.135.208.0/21 creation-time=jan/17/2025 10:17:14 
+
+205   list=TAS-IX address=31.40.24.0/21 creation-time=jan/17/2025 10:17:14 
+
+206   list=TAS-IX address=5.182.26.0/24 creation-time=jan/17/2025 10:17:14 
+
+207   list=TAS-IX address=5.133.120.0/22 creation-time=jan/17/2025 10:17:14 
+
+208   list=TAS-IX address=81.95.224.0/20 creation-time=jan/17/2025 10:17:14 
+
+209   list=TAS-IX address=82.215.66.0/23 creation-time=jan/17/2025 10:17:14 
+
+210   list=TAS-IX address=82.215.68.0/23 creation-time=jan/17/2025 10:17:14 
+
+211   list=TAS-IX address=82.215.72.0/22 creation-time=jan/17/2025 10:17:14 
+
+212   list=TAS-IX address=82.215.77.0/24 creation-time=jan/17/2025 10:17:14 
+
+213   list=TAS-IX address=82.215.78.0/23 creation-time=jan/17/2025 10:17:14 
+
+214   list=TAS-IX address=82.215.80.0/22 creation-time=jan/17/2025 10:17:14 
+
+215   list=TAS-IX address=82.215.85.0/24 creation-time=jan/17/2025 10:17:14 
+
+216   list=TAS-IX address=82.215.86.0/23 creation-time=jan/17/2025 10:17:14 
+
+217   list=TAS-IX address=82.215.88.0/21 creation-time=jan/17/2025 10:17:14 
+
+218   list=TAS-IX address=82.215.112.0/20 creation-time=jan/17/2025 10:17:14 
+
+219   list=TAS-IX address=89.146.64.0/18 creation-time=jan/17/2025 10:17:14 
+
+220   list=TAS-IX address=185.78.136.0/22 creation-time=jan/17/2025 10:17:14 
+
+221   list=Port Scanners address=78.30.204.196 
+     creation-time=jan/18/2025 09:07:30 
+
+222   list=Port Scanners address=81.8.93.66 creation-time=jan/20/2025 10:22:36 
+
+223   list=Port Scanners address=84.201.149.13 
+     creation-time=jan/29/2025 08:31:42 
+
+224   list=Port Scanners address=94.141.253.76 
+     creation-time=feb/06/2025 16:07:07 
+
+225   list=Port Scanners address=46.242.18.218 
+     creation-time=feb/12/2025 11:38:06 
+
+226   list=Port Scanners address=77.51.221.219 
+     creation-time=feb/19/2025 23:35:15 
+
+227   list=Port Scanners address=85.236.22.14 creation-time=feb/19/2025 23:36:13 
+
+228   list=Port Scanners address=185.183.92.94 
+     creation-time=mar/13/2025 11:01:36 
+
+229   list=Port Scanners address=84.54.52.88 creation-time=jul/10/2025 09:13:50 
+
+230   list=Port Scanners address=185.165.169.196 
+     creation-time=sep/15/2025 08:43:43 
+
+231 D list=trusted-ips address=192.168.88.249 creation-time=oct/09/2025 11:18:40 
+
+232 D list=trusted-ips address=192.168.88.101 creation-time=oct/09/2025 11:18:40 
+
+233 D list=trusted-ips address=192.168.88.194 creation-time=oct/09/2025 11:19:09 
+
+234 D list=trusted-ips address=192.168.88.171 creation-time=oct/09/2025 11:20:25 
+
+235 D list=trusted-ips address=192.168.88.123 creation-time=oct/09/2025 11:26:14 
+
+236 D list=trusted-ips address=192.168.88.252 creation-time=oct/09/2025 11:26:14 
+
+237 D list=trusted-ips address=192.168.88.189 creation-time=oct/09/2025 11:26:14 
+
+238 D list=trusted-ips address=192.168.88.79 creation-time=oct/09/2025 11:26:14 
+
+239 D list=trusted-ips address=192.168.88.164 creation-time=oct/09/2025 11:26:14 
+
+240 D list=trusted-ips address=192.168.88.77 creation-time=oct/09/2025 11:26:16 
+
+241 D list=trusted-ips address=192.168.88.78 creation-time=oct/09/2025 11:26:22 
+
+242 D list=trusted-ips address=192.168.88.170 creation-time=oct/09/2025 11:26:56 
+
+243 D list=trusted-ips address=192.168.88.76 creation-time=oct/09/2025 11:29:47 
+
+244 D list=trusted-ips address=192.168.88.104 creation-time=oct/09/2025 11:30:01 
+
+245 D list=trusted-ips address=195.158.21.58 creation-time=oct/09/2025 11:33:35 
+
+246 D list=trusted-ips address=95.46.80.1 creation-time=oct/09/2025 11:32:02 
+
+247 D list=trusted-ips address=31.135.213.56 creation-time=oct/09/2025 11:32:39 
+
+248 D list=trusted-ips address=192.168.88.102 creation-time=oct/09/2025 11:34:24 
+
+249 D list=trusted-ips address=192.168.88.195 creation-time=oct/09/2025 11:35:43 
+
+250 D list=trusted-ips address=192.168.88.16 creation-time=oct/09/2025 11:36:08 
+
+251 D list=trusted-ips address=192.168.88.99 creation-time=oct/09/2025 11:40:42 
+
+252 D list=trusted-ips address=192.168.88.127 creation-time=oct/09/2025 11:41:56 
+
+253 D list=trusted-ips address=192.168.88.18 creation-time=oct/09/2025 11:43:37 
+
+254 D list=trusted-ips address=192.168.88.165 creation-time=oct/09/2025 11:44:45 
+
+255 D list=trusted-ips address=192.168.88.172 creation-time=oct/09/2025 11:53:01 
+
+256 D list=trusted-ips address=192.168.151.39 creation-time=oct/09/2025 11:53:31 
+
+257 D list=trusted-ips address=192.168.110.38 creation-time=oct/09/2025 11:53:36 
+
+258 D list=trusted-ips address=192.168.110.100 
+     creation-time=oct/09/2025 11:53:38 
+
+259 D list=trusted-ips address=192.168.110.94 creation-time=oct/09/2025 11:53:41 
+
+260 D list=trusted-ips address=192.168.110.33 creation-time=oct/09/2025 11:53:41 
+
+261 D list=trusted-ips address=192.168.110.90 creation-time=oct/09/2025 11:53:45 
+
+262 D list=trusted-ips address=192.168.110.43 creation-time=oct/09/2025 11:53:48 
+
+263 D list=trusted-ips address=192.168.110.78 creation-time=oct/09/2025 11:53:48 
+
+264 D list=trusted-ips address=192.168.110.92 creation-time=oct/09/2025 11:53:49 
+
+265 D list=trusted-ips address=192.168.94.11 creation-time=oct/09/2025 11:53:55 
+
+266 D list=trusted-ips address=192.168.88.89 creation-time=oct/09/2025 11:53:55 
+
+267 D list=trusted-ips address=192.168.110.252 
+     creation-time=oct/09/2025 11:55:40 
+
+268 D list=trusted-ips address=192.168.88.88 creation-time=oct/09/2025 11:55:55 
+
+269 D list=trusted-ips address=192.168.88.197 creation-time=oct/09/2025 11:56:28 
+
+270 D list=trusted-ips address=192.168.110.31 creation-time=oct/09/2025 11:56:51 
+
+271 D list=trusted-ips address=192.168.88.129 creation-time=oct/09/2025 11:56:51 
+
+272 D list=trusted-ips address=172.16.16.19 creation-time=oct/09/2025 12:05:31 
+
+273 D list=trusted-ips address=192.168.94.10 creation-time=oct/09/2025 12:07:10 
+
+274 D list=trusted-ips address=192.168.40.2 creation-time=oct/09/2025 12:32:58 
+
+275 D list=trusted-ips address=192.168.100.75 creation-time=oct/09/2025 12:38:42 
+
+276 D list=trusted-ips address=192.168.100.53 creation-time=oct/09/2025 12:38:57 
+
+277 D list=trusted-ips address=172.16.16.28 creation-time=oct/09/2025 12:46:21 
+
+278 D list=trusted-ips address=192.168.150.225 
+     creation-time=oct/09/2025 12:46:33 
+
+279 D list=trusted-ips address=192.168.150.249 
+     creation-time=oct/09/2025 13:28:15 
+
+280 D list=trusted-ips address=192.168.94.2 creation-time=oct/09/2025 13:30:44 
+
+281 D list=trusted-ips address=192.168.100.11 creation-time=oct/09/2025 18:26:21 
+
+282 D list=trusted-ips address=95.46.80.4 creation-time=oct/09/2025 21:57:18 
+
+283 D list=trusted-ips address=192.168.88.103 creation-time=oct/10/2025 00:08:13 
+
+284 D list=trusted-ips address=192.168.88.109 creation-time=oct/10/2025 00:09:05 
+
+285 D list=trusted-ips address=192.168.88.196 creation-time=oct/10/2025 00:12:11 
+
+286 D list=trusted-ips address=192.168.94.16 creation-time=oct/10/2025 09:20:03 
+
+287 D list=trusted-ips address=192.168.88.251 creation-time=oct/10/2025 09:31:37 
+
+288 D list=trusted-ips address=192.168.88.250 creation-time=oct/10/2025 09:31:40 
+
+289   list=Port Scanners address=213.183.121.70 
+     creation-time=oct/10/2025 11:06:55 
+
+290 D list=trusted-ips address=192.168.100.62 creation-time=oct/10/2025 12:25:31 
+
+291 D list=Port Scanners address=162.216.18.241 
+     creation-time=oct/10/2025 17:15:06 
+
+292 D list=Port Scanners address=45.33.16.187 creation-time=oct/10/2025 17:41:09 
+
+293 D list=trusted-ips address=192.168.150.182 
+     creation-time=oct/11/2025 03:08:40 
+
+294 D list=Port Scanners address=172.236.137.159 
+     creation-time=oct/11/2025 04:20:50 
+
+295 D list=Port Scanners address=167.94.145.111 
+     creation-time=oct/11/2025 04:50:22 
+
+296 D list=trusted-ips address=172.16.16.22 creation-time=oct/11/2025 21:13:30 
+
+297 D list=Port Scanners address=199.45.155.93 
+     creation-time=oct/12/2025 05:23:40 
+
+298 D list=Port Scanners address=194.180.49.29 
+     creation-time=oct/12/2025 18:21:35 
+
+299 D list=trusted-ips address=192.168.94.94 creation-time=oct/13/2025 14:46:20 
+
+300 D list=trusted-ips address=31.135.213.43 creation-time=oct/13/2025 18:11:46 
+
+301 D list=Port Scanners address=47.122.122.1 creation-time=oct/13/2025 19:38:01 
+
+302 D list=trusted-ips address=192.168.150.166 
+     creation-time=oct/14/2025 09:50:53 
+
+303 D list=trusted-ips address=192.168.150.192 
+     creation-time=oct/14/2025 10:06:27 
+
+304 D list=Port Scanners address=139.162.119.146 
+     creation-time=oct/14/2025 11:07:26 
+
+305 D list=trusted-ips address=192.168.100.96 creation-time=oct/14/2025 11:22:55 
+
+306 D list=Port Scanners address=39.152.192.155 
+     creation-time=oct/14/2025 12:48:31 
+
+307 D list=trusted-ips address=192.168.150.24 creation-time=oct/14/2025 17:04:33 
+
+308 D list=trusted-ips address=192.168.110.113 
+     creation-time=oct/14/2025 17:23:27 
+
+309 D list=Port Scanners address=1.173.219.51 creation-time=oct/14/2025 17:24:14 
+
+310 D list=Port Scanners address=139.162.124.188 
+     creation-time=oct/14/2025 19:49:55 
+
+311 D list=Port Scanners address=178.89.87.193 
+     creation-time=oct/15/2025 04:41:02 
+
+312 D list=trusted-ips address=192.168.100.196 
+     creation-time=oct/15/2025 09:07:59 
+
+313 D list=trusted-ips address=192.168.150.160 
+     creation-time=oct/15/2025 09:14:42 
+
+314 D list=trusted-ips address=192.168.150.179 
+     creation-time=oct/15/2025 12:17:30 
+
+315 D list=trusted-ips address=192.168.150.80 creation-time=oct/15/2025 12:17:49 
+
+316 D list=trusted-ips address=192.168.150.123 
+     creation-time=oct/15/2025 15:51:08 
+
+317 D list=trusted-ips address=192.168.150.90 creation-time=oct/15/2025 15:51:08 
+
+318 D list=trusted-ips address=192.168.150.162 
+     creation-time=oct/15/2025 15:51:08 
+
+319 D list=trusted-ips address=192.168.150.21 creation-time=oct/15/2025 15:51:08 
+
+320 D list=trusted-ips address=192.168.150.149 
+     creation-time=oct/15/2025 15:51:15 
+
+321 D list=trusted-ips address=192.168.150.110 
+     creation-time=oct/15/2025 15:51:15 
+
+322 D list=trusted-ips address=192.168.150.115 
+     creation-time=oct/15/2025 15:51:15 
+
+323 D list=trusted-ips address=192.168.150.112 
+     creation-time=oct/15/2025 15:51:15 
+
+324 D list=trusted-ips address=192.168.150.212 
+     creation-time=oct/15/2025 15:51:15 
+
+325 D list=trusted-ips address=192.168.151.18 creation-time=oct/15/2025 15:51:15 
+
+326 D list=trusted-ips address=192.168.150.74 creation-time=oct/15/2025 15:51:15 
+
+327 D list=trusted-ips address=192.168.150.99 creation-time=oct/15/2025 15:51:15 
+
+328 D list=trusted-ips address=192.168.150.77 creation-time=oct/15/2025 15:51:15 
+
+329 D list=trusted-ips address=192.168.150.139 
+     creation-time=oct/15/2025 15:51:15 
+
+330 D list=trusted-ips address=192.168.150.146 
+     creation-time=oct/15/2025 15:51:15 
+
+331 D list=trusted-ips address=192.168.150.208 
+     creation-time=oct/15/2025 15:51:15 
+
+332 D list=trusted-ips address=192.168.150.102 
+     creation-time=oct/15/2025 15:51:15 
+
+333 D list=trusted-ips address=192.168.151.37 creation-time=oct/15/2025 15:51:15 
+
+334 D list=trusted-ips address=192.168.150.164 
+     creation-time=oct/15/2025 15:51:15 
+
+335 D list=trusted-ips address=192.168.150.51 creation-time=oct/15/2025 15:51:15 
+
+336 D list=trusted-ips address=192.168.151.55 creation-time=oct/15/2025 15:51:16 
+
+337 D list=trusted-ips address=192.168.150.15 creation-time=oct/15/2025 15:52:22 
+
+338 D list=trusted-ips address=192.168.151.8 creation-time=oct/15/2025 15:53:15 
+
+339 D list=trusted-ips address=95.46.80.8 creation-time=oct/15/2025 16:13:15 
+
+340 D list=Port Scanners address=139.162.119.94 
+     creation-time=oct/15/2025 19:59:36 
+
+341 D list=Port Scanners address=79.124.56.138 
+     creation-time=oct/16/2025 02:28:20 
+
+342 D list=Port Scanners address=194.195.208.70 
+     creation-time=oct/16/2025 09:05:51 
+
+343 D list=Port Scanners address=97.107.134.31 
+     creation-time=oct/16/2025 09:07:07 
+
+344 D list=Port Scanners address=72.14.186.195 
+     creation-time=oct/16/2025 09:12:35 
+
+345 D list=Port Scanners address=45.56.72.13 creation-time=oct/16/2025 09:32:58 
+
+346 D list=Port Scanners address=50.116.44.176 
+     creation-time=oct/16/2025 09:41:28 
+
+347 D list=trusted-ips address=192.168.151.32 creation-time=oct/16/2025 11:26:56 
+
+348 D list=trusted-ips address=192.168.100.127 
+     creation-time=oct/16/2025 11:38:08 
+
+349 D list=Port Scanners address=180.143.228.3 
+     creation-time=oct/16/2025 12:47:45 
+
+350 D list=trusted-ips address=192.168.151.67 creation-time=oct/16/2025 17:41:55 
+
+351 D list=trusted-ips address=172.16.16.10 creation-time=oct/17/2025 01:11:58 
+
+352 D list=Port Scanners address=66.132.153.118 
+     creation-time=oct/17/2025 03:05:01 
+
+353 D list=trusted-ips address=172.16.16.23 creation-time=oct/17/2025 10:52:56 
+
+354 D list=trusted-ips address=192.168.150.120 
+     creation-time=oct/17/2025 14:28:21 
+
+355 D list=Port Scanners address=172.232.232.179 
+     creation-time=oct/17/2025 17:18:48 
+
+356 D list=trusted-ips address=192.168.150.22 creation-time=oct/17/2025 22:55:07 
+
+357 D list=Port Scanners address=74.207.240.187 
+     creation-time=oct/18/2025 01:10:21 
+
+358 D list=Port Scanners address=74.207.253.160 
+     creation-time=oct/18/2025 01:16:32 
+
+359 D list=Port Scanners address=173.230.155.151 
+     creation-time=oct/18/2025 01:21:26 
+
+360 D list=Port Scanners address=139.177.206.6 
+     creation-time=oct/18/2025 01:38:19 
+
+361 D list=Port Scanners address=199.45.154.127 
+     creation-time=oct/18/2025 07:17:59 
+
+362 D list=trusted-ips address=192.168.150.199 
+     creation-time=oct/18/2025 07:20:19 
+
+363 D list=trusted-ips address=192.168.56.248 creation-time=oct/18/2025 19:46:20 
+
+364 D list=Port Scanners address=172.232.232.169 
+     creation-time=oct/19/2025 16:25:33 
+
+365 D list=Port Scanners address=66.132.153.124 
+     creation-time=oct/20/2025 06:24:22 
+
+366 D list=Port Scanners address=199.45.155.99 
+     creation-time=oct/20/2025 08:12:28 
+
+367 D list=trusted-ips address=192.168.94.14 creation-time=oct/20/2025 13:37:31 
+
+368 D list=trusted-ips address=192.168.150.20 creation-time=oct/20/2025 13:38:10 
+
+369 D list=Port Scanners address=167.94.138.181 
+     creation-time=oct/21/2025 03:20:06 
+
+370 D list=trusted-ips address=192.168.100.19 creation-time=oct/21/2025 11:26:06 
+
+371 D list=trusted-ips address=192.168.150.238 
+     creation-time=oct/21/2025 12:43:25 
+
+372 D list=Port Scanners address=172.232.232.48 
+     creation-time=oct/21/2025 16:27:44 
+
+373 D list=Port Scanners address=23.234.110.104 
+     creation-time=oct/21/2025 19:25:44 
+
+374 D list=Port Scanners address=199.45.154.139 
+     creation-time=oct/23/2025 08:02:32 
+
+375 D list=trusted-ips address=192.168.150.169 
+     creation-time=oct/24/2025 18:04:08 
+
+376 D list=trusted-ips address=192.168.150.144 
+     creation-time=oct/25/2025 05:48:49 
+
+377 D list=trusted-ips address=192.168.151.53 creation-time=oct/25/2025 05:54:48 
+
+378 D list=Port Scanners address=173.249.47.226 
+     creation-time=oct/25/2025 23:45:15 
+
+379 D list=Port Scanners address=77.52.55.98 creation-time=oct/26/2025 18:02:23 
+
+380 D list=Port Scanners address=119.18.55.118 
+     creation-time=oct/27/2025 00:13:56 
+
+381 D list=Port Scanners address=129.226.147.239 
+     creation-time=oct/28/2025 07:41:00 
+
+382 D list=Port Scanners address=139.162.3.144 
+     creation-time=oct/29/2025 03:11:29 
+
+383 D list=Port Scanners address=185.224.128.136 
+     creation-time=oct/29/2025 05:04:10 
+
+384 D list=trusted-ips address=192.168.151.68 creation-time=oct/29/2025 10:34:40 
+
+385 D list=trusted-ips address=192.168.151.64 creation-time=oct/29/2025 18:04:34 
+
+386 D list=trusted-ips address=172.16.254.53 creation-time=oct/30/2025 00:41:04 
+
+387 D list=Port Scanners address=104.152.52.220 
+     creation-time=oct/30/2025 04:52:58 
+
+388 D list=Port Scanners address=194.180.49.73 
+     creation-time=oct/30/2025 07:52:09 
+
+389 D list=Port Scanners address=104.237.132.65 
+     creation-time=oct/30/2025 13:26:54 
+
+390 D list=Port Scanners address=45.79.67.28 creation-time=oct/30/2025 13:46:11 
+
+391 D list=trusted-ips address=192.168.151.78 creation-time=oct/30/2025 13:47:36 
+
+392 D list=Port Scanners address=143.244.187.201 
+     creation-time=oct/31/2025 05:45:51 
+
+393 D list=Port Scanners address=38.7.145.50 creation-time=oct/31/2025 15:41:26 
+
+394 D list=Port Scanners address=38.124.152.39 
+     creation-time=oct/31/2025 17:29:24 
+
+395 D list=Port Scanners address=89.248.165.205 
+     creation-time=oct/31/2025 22:49:03 
+
+396 D list=Port Scanners address=51.83.66.238 creation-time=nov/01/2025 21:11:36 
+
+397 D list=Port Scanners address=146.70.198.214 
+     creation-time=nov/01/2025 23:00:35 
+
+398 D list=Port Scanners address=89.248.163.190 
+     creation-time=nov/02/2025 01:26:55 
+
+399 D list=Port Scanners address=59.9.36.246 creation-time=nov/03/2025 07:37:43 
+
+400 D list=trusted-ips address=192.168.151.48 creation-time=nov/03/2025 11:30:15 
+
+401 D list=Port Scanners address=139.162.3.141 
+     creation-time=nov/04/2025 12:40:51 
+
+402 D list=trusted-ips address=172.16.42.170 creation-time=nov/05/2025 03:58:03 
+
+403 D list=Port Scanners address=62.210.129.171 
+     creation-time=nov/05/2025 05:21:53 
+
+404 D list=Port Scanners address=23.176.184.152 
+     creation-time=nov/05/2025 07:37:20 
+
+405 D list=trusted-ips address=192.168.150.165 
+     creation-time=nov/05/2025 12:08:09 
+
+406 D list=trusted-ips address=192.168.150.235 
+     creation-time=nov/05/2025 12:12:37 
+
+407 D list=Port Scanners address=104.152.52.234 
+     creation-time=nov/05/2025 22:35:25 
+
+408 D list=Port Scanners address=45.56.100.206 
+     creation-time=nov/06/2025 05:05:55 
+
+409 D list=Port Scanners address=104.237.132.58 
+     creation-time=nov/06/2025 05:10:55 
+
+410 D list=Port Scanners address=192.155.84.74 
+     creation-time=nov/06/2025 05:11:06 
+
+411 D list=Port Scanners address=172.104.5.74 creation-time=nov/06/2025 05:13:35 
+
+412 D list=Port Scanners address=194.195.208.25 
+     creation-time=nov/06/2025 05:16:13 
+
+413 D list=Port Scanners address=45.33.7.4 creation-time=nov/06/2025 05:17:22 
+
+414 D list=Port Scanners address=45.79.214.253 
+     creation-time=nov/06/2025 05:20:51 
+
+415 D list=Port Scanners address=45.33.96.214 creation-time=nov/06/2025 05:21:17 
+
+416 D list=Port Scanners address=50.116.23.67 creation-time=nov/06/2025 05:26:01 
+
+417 D list=Port Scanners address=173.255.247.156 
+     creation-time=nov/06/2025 05:33:01 
+
+418 D list=Port Scanners address=45.79.175.85 creation-time=nov/06/2025 05:38:13 
+
+419 D list=Port Scanners address=97.107.139.94 
+     creation-time=nov/06/2025 05:54:22 
+
+420 D list=Port Scanners address=61.184.87.135 
+     creation-time=nov/07/2025 17:04:59 
+
+421 D list=trusted-ips address=192.168.151.23 creation-time=nov/08/2025 15:49:26 
+
+422 D list=Port Scanners address=77.52.102.234 
+     creation-time=nov/08/2025 15:52:15 
+
+423 D list=Port Scanners address=45.86.153.99 creation-time=nov/10/2025 07:59:56 
+
+424 D list=Port Scanners address=91.99.123.248 
+     creation-time=nov/10/2025 13:33:54 
+
+425 D list=trusted-ips address=192.168.151.21 creation-time=nov/11/2025 11:08:47 
+
+426 D list=Port Scanners address=51.15.27.11 creation-time=nov/11/2025 11:41:26 
+
+427   list=Port Scanners address=185.135.232.51 
+     creation-time=nov/11/2025 11:45:37 
+
+428 D list=Port Scanners address=193.32.127.242 
+     creation-time=nov/11/2025 19:14:42 
+
+429 D list=Port Scanners address=217.15.165.104 
+     creation-time=nov/11/2025 22:58:22 
+
+430 D list=Port Scanners address=79.124.40.142 
+     creation-time=nov/12/2025 00:18:32 
+
+431 D list=Port Scanners address=218.92.253.242 
+     creation-time=nov/12/2025 12:29:33 
+
+432 D list=trusted-ips address=192.168.88.17 creation-time=nov/12/2025 16:05:00 
+
+433 D list=trusted-ips address=192.168.110.10 creation-time=nov/12/2025 16:05:00 
+
+434 D list=Port Scanners address=109.199.105.80 
+     creation-time=nov/12/2025 19:49:08 
+
+435 D list=Port Scanners address=139.162.119.196 
+     creation-time=nov/14/2025 00:41:25 
+
+436 D list=Port Scanners address=178.57.99.9 creation-time=nov/14/2025 04:26:04 
+
+437 D list=trusted-ips address=192.168.100.17 creation-time=nov/14/2025 05:29:35 
+
+438 D list=Port Scanners address=199.45.155.81 
+     creation-time=nov/14/2025 09:39:43 
+
+439 D list=trusted-ips address=192.168.150.236 
+     creation-time=nov/14/2025 15:31:04 
+
+440 D list=Port Scanners address=172.232.232.10 
+     creation-time=nov/15/2025 00:30:15 
+
+441 D list=Port Scanners address=198.98.56.220 
+     creation-time=nov/15/2025 04:33:14 
+
+442 D list=Port Scanners address=173.239.217.19 
+     creation-time=nov/15/2025 05:26:24 
+
+443 D list=Port Scanners address=98.159.36.7 creation-time=nov/15/2025 05:26:24 
+
+444 D list=Port Scanners address=98.159.36.27 creation-time=nov/15/2025 05:26:24 
+
+445 D list=Port Scanners address=95.181.232.22 
+     creation-time=nov/15/2025 05:26:24 
+
+446 D list=Port Scanners address=45.134.212.201 
+     creation-time=nov/15/2025 05:26:24 
+
+447 D list=Port Scanners address=194.32.122.12 
+     creation-time=nov/15/2025 05:26:24 
+
+448 D list=Port Scanners address=185.217.71.136 
+     creation-time=nov/15/2025 05:26:24 
+
+449 D list=Port Scanners address=95.181.233.153 
+     creation-time=nov/15/2025 05:26:24 
+
+450 D list=Port Scanners address=91.90.122.134 
+     creation-time=nov/15/2025 05:26:24 
+
+451 D list=Port Scanners address=84.239.42.147 
+     creation-time=nov/15/2025 05:26:24 
+
+452 D list=Port Scanners address=149.50.220.138 
+     creation-time=nov/15/2025 05:26:24 
+
+453 D list=Port Scanners address=178.175.142.134 
+     creation-time=nov/15/2025 05:26:24 
+
+454 D list=Port Scanners address=178.175.130.251 
+     creation-time=nov/15/2025 05:26:24 
+
+455 D list=Port Scanners address=95.181.233.150 
+     creation-time=nov/15/2025 05:26:24 
+
+456 D list=Port Scanners address=185.225.28.5 creation-time=nov/15/2025 05:26:24 
+
+457 D list=Port Scanners address=95.181.239.139 
+     creation-time=nov/15/2025 05:26:24 
+
+458 D list=Port Scanners address=95.181.237.140 
+     creation-time=nov/15/2025 05:26:24 
+
+459 D list=Port Scanners address=173.239.201.139 
+     creation-time=nov/15/2025 05:26:24 
+
+460 D list=Port Scanners address=84.17.56.172 creation-time=nov/15/2025 05:26:24 
+
+461 D list=Port Scanners address=173.239.201.130 
+     creation-time=nov/15/2025 05:26:24 
+
+462 D list=Port Scanners address=84.17.56.179 creation-time=nov/15/2025 05:26:24 
+
+463 D list=Port Scanners address=91.90.126.145 
+     creation-time=nov/15/2025 05:26:24 
+
+464 D list=Port Scanners address=173.244.32.10 
+     creation-time=nov/15/2025 05:26:24 
+
+465 D list=Port Scanners address=173.244.32.15 
+     creation-time=nov/15/2025 05:26:24 
+
+466 D list=Port Scanners address=173.244.58.11 
+     creation-time=nov/15/2025 05:26:24 
+
+467 D list=Port Scanners address=223.252.16.147 
+     creation-time=nov/15/2025 05:26:24 
+
+468 D list=Port Scanners address=43.250.207.109 
+     creation-time=nov/15/2025 05:26:24 
+
+469 D list=Port Scanners address=45.133.173.122 
+     creation-time=nov/15/2025 05:26:28 
+
+470 D list=Port Scanners address=173.239.217.4 
+     creation-time=nov/15/2025 05:26:28 
+
+471 D list=Port Scanners address=185.253.162.133 
+     creation-time=nov/15/2025 05:26:28 
+
+472 D list=Port Scanners address=77.81.142.139 
+     creation-time=nov/15/2025 05:26:28 
+
+473 D list=Port Scanners address=43.250.207.100 
+     creation-time=nov/15/2025 05:26:28 
+
+474 D list=Port Scanners address=172.232.253.221 
+     creation-time=nov/15/2025 07:30:33 
+
+475 D list=Port Scanners address=62.60.131.115 
+     creation-time=nov/15/2025 14:00:05 
+
+476 D list=Port Scanners address=89.248.163.155 
+     creation-time=nov/15/2025 19:19:29 
+
+477 D list=Port Scanners address=45.79.123.76 creation-time=nov/16/2025 07:59:11 
+
+478 D list=Port Scanners address=62.60.131.55 creation-time=nov/16/2025 12:16:07 
+
+479 D list=trusted-ips address=213.230.65.131 creation-time=nov/16/2025 18:45:39 
+
+480 D list=trusted-ips address=213.230.65.130 creation-time=nov/16/2025 19:01:27 
+
+481 D list=Port Scanners address=39.105.36.71 creation-time=nov/17/2025 09:06:30 
+
+482 D list=Port Scanners address=5.189.162.85 creation-time=nov/17/2025 09:31:06 
+
+483 D list=Port Scanners address=194.180.48.148 
+     creation-time=nov/18/2025 16:19:57 
+
+484 D list=trusted-ips address=194.93.24.41 creation-time=nov/18/2025 19:03:11 
+
+485 D list=trusted-ips address=192.168.150.233 
+     creation-time=nov/19/2025 10:31:06 
+
+486 D list=Port Scanners address=45.140.222.63 
+     creation-time=nov/20/2025 03:22:33 
+
+487 D list=Port Scanners address=62.133.47.133 
+     creation-time=nov/20/2025 04:33:21 
+
+488 D list=Port Scanners address=146.70.10.49 creation-time=nov/20/2025 04:33:21 
+
+489 D list=Port Scanners address=62.133.47.154 
+     creation-time=nov/20/2025 04:33:21 
+
+490 D list=Port Scanners address=183.57.179.136 
+     creation-time=nov/21/2025 06:52:07 
+
+491 D list=Port Scanners address=36.49.87.130 creation-time=nov/21/2025 06:53:03 
+
+492 D list=trusted-ips address=172.16.6.22 creation-time=nov/22/2025 00:41:59 
+
+493 D list=Port Scanners address=167.94.138.125 
+     creation-time=nov/23/2025 01:45:05 
+
+494 D list=Port Scanners address=172.237.27.147 
+     creation-time=nov/23/2025 02:31:22 
+
+495 D list=Port Scanners address=161.123.35.251 
+     creation-time=nov/24/2025 03:57:58 
+
+496 D list=trusted-ips address=192.168.151.62 creation-time=nov/24/2025 08:24:14 
+
+497 D list=Port Scanners address=165.154.225.59 
+     creation-time=nov/25/2025 22:58:18 
+
+498 D list=Port Scanners address=109.201.53.94 
+     creation-time=nov/26/2025 01:17:50 
+
+499 D list=Port Scanners address=162.142.125.118 
+     creation-time=nov/26/2025 01:29:37 
+
+500 D list=trusted-ips address=192.168.150.101 
+     creation-time=nov/27/2025 11:22:50 
+
+501 D list=Port Scanners address=172.232.188.177 
+     creation-time=nov/27/2025 13:09:48 
+
+502 D list=Port Scanners address=104.152.52.68 
+     creation-time=nov/27/2025 19:30:23 
+
+503 D list=Port Scanners address=66.175.208.166 
+     creation-time=nov/27/2025 20:06:08 
+
+504 D list=Port Scanners address=45.79.190.208 
+     creation-time=nov/27/2025 23:52:57 
+
+505 D list=trusted-ips address=192.168.150.14 creation-time=nov/28/2025 06:12:53 
+
+506 D list=Port Scanners address=181.214.173.118 
+     creation-time=nov/29/2025 00:39:46 
+
+507 D list=Port Scanners address=149.88.26.95 creation-time=nov/29/2025 00:39:46 
+
+508 D list=Port Scanners address=138.199.39.168 
+     creation-time=nov/29/2025 00:39:46 
+
+509 D list=Port Scanners address=203.188.182.56 
+     creation-time=nov/29/2025 00:39:50 
+
+510 D list=Port Scanners address=181.214.218.251 
+     creation-time=nov/29/2025 00:39:50 
+
+511 D list=Port Scanners address=196.196.53.46 
+     creation-time=nov/29/2025 00:39:50 
+
+512 D list=Port Scanners address=77.81.142.223 
+     creation-time=nov/29/2025 00:39:50 
+
+513 D list=Port Scanners address=64.64.98.9 creation-time=nov/29/2025 00:39:50 
+
+514 D list=Port Scanners address=196.196.53.39 
+     creation-time=nov/29/2025 00:42:25 
+
+515 D list=Port Scanners address=37.46.115.54 creation-time=nov/29/2025 00:42:25 
+
+516 D list=Port Scanners address=195.80.150.211 
+     creation-time=nov/29/2025 00:42:25 
+
+517 D list=Port Scanners address=203.188.183.121 
+     creation-time=nov/29/2025 00:42:25 
+
+518 D list=Port Scanners address=45.132.194.57 
+     creation-time=nov/29/2025 00:42:25 
+
+519 D list=Port Scanners address=45.133.193.23 
+     creation-time=nov/29/2025 00:42:25 
+
+520 D list=Port Scanners address=212.112.19.76 
+     creation-time=nov/29/2025 00:42:25 
+
+521 D list=Port Scanners address=45.133.193.29 
+     creation-time=nov/29/2025 00:42:25 
+
+522 D list=Port Scanners address=84.239.49.7 creation-time=nov/29/2025 00:42:25 
+
+523 D list=Port Scanners address=86.106.74.252 
+     creation-time=nov/29/2025 00:42:25 
+
+524 D list=Port Scanners address=45.84.102.24 creation-time=nov/29/2025 00:42:25 
+
+525 D list=Port Scanners address=77.81.142.222 
+     creation-time=nov/29/2025 00:42:25 
+
+526 D list=Port Scanners address=173.239.200.136 
+     creation-time=nov/29/2025 00:42:25 
+
+527 D list=Port Scanners address=98.159.40.13 creation-time=nov/29/2025 00:42:25 
+
+528 D list=Port Scanners address=95.181.235.144 
+     creation-time=nov/29/2025 00:42:25 
+
+529 D list=Port Scanners address=95.181.235.139 
+     creation-time=nov/29/2025 00:42:25 
+
+530 D list=Port Scanners address=173.239.194.56 
+     creation-time=nov/29/2025 00:42:25 
+
+531 D list=Port Scanners address=176.125.228.162 
+     creation-time=nov/29/2025 00:43:22 
+
+532 D list=Port Scanners address=95.181.236.152 
+     creation-time=nov/29/2025 00:43:27 
+
+533 D list=Port Scanners address=213.209.143.88 
+     creation-time=nov/29/2025 02:04:33 
+
+534 D list=Port Scanners address=18.221.100.43 
+     creation-time=nov/29/2025 18:25:01 
+
+535 D list=Port Scanners address=45.140.222.64 
+     creation-time=nov/30/2025 16:23:37 
+
+536 D list=Port Scanners address=172.234.207.202 
+     creation-time=nov/30/2025 18:56:15 
+
+537 D list=Port Scanners address=45.140.222.62 
+     creation-time=nov/30/2025 22:42:38 
+
+538 D list=trusted-ips address=192.168.150.196 
+     creation-time=dec/02/2025 04:41:27 
+
+539 D list=trusted-ips address=192.168.150.151 
+     creation-time=dec/02/2025 14:04:25 
+
+540 D list=Port Scanners address=172.236.233.65 
+     creation-time=dec/03/2025 04:08:02 
+
+541 D list=trusted-ips address=95.46.80.5 creation-time=dec/03/2025 09:14:36 
+
+542 D list=trusted-ips address=95.46.80.7 creation-time=dec/03/2025 09:14:36 
+
+543 D list=Port Scanners address=167.94.138.186 
+     creation-time=dec/04/2025 02:31:33 
+
+544 D list=Port Scanners address=180.249.105.131 
+     creation-time=dec/04/2025 11:13:35 
+
+545 D list=Port Scanners address=203.83.34.233 
+     creation-time=dec/04/2025 11:13:35 
+
+546 D list=Port Scanners address=106.57.254.2 creation-time=dec/05/2025 00:54:30 
+
+547 D list=Port Scanners address=206.168.34.223 
+     creation-time=dec/05/2025 07:20:17 
+
+548 D list=Port Scanners address=182.100.119.4 
+     creation-time=dec/05/2025 11:08:14 
+
+549 D list=Port Scanners address=61.132.217.130 
+     creation-time=dec/05/2025 14:22:59 
+
+550 D list=Port Scanners address=43.254.158.134 
+     creation-time=dec/05/2025 22:28:41 
+
+551 D list=Port Scanners address=66.132.153.139 
+     creation-time=dec/06/2025 06:28:05 
+
+552 D list=Port Scanners address=213.206.63.8 creation-time=dec/06/2025 15:06:19 
+
+553 D list=Port Scanners address=170.78.97.89 creation-time=dec/06/2025 20:08:42 
+
+554 D list=Port Scanners address=77.90.185.52 creation-time=dec/07/2025 09:40:22 
+
+555 D list=Port Scanners address=198.98.55.219 
+     creation-time=dec/08/2025 11:17:14 
+
+556 D list=Port Scanners address=13.58.114.74 creation-time=dec/08/2025 17:51:18 
+
+557 D list=Port Scanners address=172.35.255.2 creation-time=dec/09/2025 18:02:27 
+
+558 D list=trusted-ips address=192.168.150.168 
+     creation-time=dec/09/2025 20:13:20 
+
+559 D list=Port Scanners address=3.134.93.22 creation-time=dec/11/2025 09:34:07 
+
+560 D list=Port Scanners address=31.97.48.29 creation-time=dec/11/2025 10:23:05 
+
+561 D list=Port Scanners address=128.1.184.219 
+     creation-time=dec/11/2025 18:45:12 
+
+562 D list=Port Scanners address=103.136.43.160 
+     creation-time=dec/11/2025 22:20:34 
+
+563 D list=Port Scanners address=36.103.173.7 creation-time=dec/11/2025 22:47:34 
+
+564 D list=Port Scanners address=103.136.43.162 
+     creation-time=dec/12/2025 01:34:56 
+
+565 D list=Port Scanners address=104.128.144.201 
+     creation-time=dec/12/2025 07:08:41 
+
+566 D list=Port Scanners address=103.136.43.153 
+     creation-time=dec/12/2025 09:39:25 
+
+567 D list=Port Scanners address=103.136.43.158 
+     creation-time=dec/12/2025 12:38:03 
+
+568 D list=Port Scanners address=61.142.57.14 creation-time=dec/12/2025 12:57:14 
+
+569 D list=Port Scanners address=103.136.43.161 
+     creation-time=dec/12/2025 16:12:52 
+
+570 D list=Port Scanners address=103.136.43.157 
+     creation-time=dec/12/2025 16:17:35 
+
+571 D list=Port Scanners address=52.90.24.184 creation-time=dec/12/2025 22:46:43 
+
+572 D list=Port Scanners address=199.45.155.89 
+     creation-time=dec/13/2025 03:51:47 
+
+573 D list=trusted-ips address=192.168.88.21 creation-time=dec/13/2025 18:47:52 
+
+574 D list=trusted-ips address=192.168.150.219 
+     creation-time=dec/14/2025 02:31:13 
+
+575 D list=Port Scanners address=104.248.45.197 
+     creation-time=dec/14/2025 07:48:19 
+
+576 D list=Port Scanners address=109.201.53.17 
+     creation-time=dec/14/2025 11:28:42 
+
+577 D list=Port Scanners address=206.168.34.205 
+     creation-time=dec/15/2025 08:29:25 
+
+578 D list=Port Scanners address=199.45.154.155 
+     creation-time=dec/15/2025 09:23:40 
+
+579 D list=trusted-ips address=192.168.150.195 
+     creation-time=dec/15/2025 09:54:59 
+
+580 D list=trusted-ips address=192.168.100.157 
+     creation-time=dec/15/2025 14:53:47 
+
+581 D list=trusted-ips address=192.168.100.64 creation-time=dec/15/2025 16:24:49 
+
+582 D list=trusted-ips address=192.168.150.255 
+     creation-time=dec/15/2025 16:28:04 
+
+583 D list=Port Scanners address=219.153.113.104 
+     creation-time=dec/16/2025 02:40:22 
+
+584 D list=Port Scanners address=162.142.125.127 
+     creation-time=dec/16/2025 03:57:10 
+
+585 D list=Port Scanners address=199.45.154.116 
+     creation-time=dec/16/2025 08:48:18 
+
+586 D list=Port Scanners address=103.136.43.159 
+     creation-time=dec/16/2025 13:34:31 
+
+587 D list=Port Scanners address=18.224.184.103 
+     creation-time=dec/16/2025 15:12:55 
+
+588 D list=Port Scanners address=158.94.209.120 
+     creation-time=dec/16/2025 20:09:03 
+
+589 D list=Port Scanners address=206.168.34.220 
+     creation-time=dec/17/2025 07:46:30 
+
+590 D list=Port Scanners address=103.136.43.156 
+     creation-time=dec/17/2025 11:32:05 
+
+591 D list=Port Scanners address=45.56.94.61 creation-time=dec/17/2025 13:23:34 
+
+592 D list=trusted-ips address=192.168.151.66 creation-time=dec/18/2025 14:16:07 
+
+593 D list=trusted-ips address=192.168.151.58 creation-time=dec/18/2025 14:47:45 
+
+594 D list=Port Scanners address=45.129.56.161 
+     creation-time=dec/19/2025 02:46:37 
+
+595 D list=trusted-ips address=172.16.16.11 creation-time=dec/19/2025 03:13:39 
+
+596 D list=Port Scanners address=185.254.75.26 
+     creation-time=dec/19/2025 04:38:04 
+
+597 D list=Port Scanners address=117.90.100.7 creation-time=dec/19/2025 10:37:30 
+
+598 D list=Port Scanners address=96.126.106.7 creation-time=dec/19/2025 11:57:14 
+
+599 D list=Port Scanners address=3.15.169.123 creation-time=dec/20/2025 20:16:24 
+
+600 D list=Port Scanners address=62.210.132.19 
+     creation-time=dec/21/2025 07:01:01 
+
+601 D list=Port Scanners address=62.210.215.49 
+     creation-time=dec/21/2025 10:51:58 
+
+602 D list=Port Scanners address=223.74.150.169 
+     creation-time=dec/21/2025 19:44:10 
+
+603 D list=Port Scanners address=167.94.138.119 
+     creation-time=dec/22/2025 02:19:16 
+
+604 D list=trusted-ips address=192.168.150.47 creation-time=dec/22/2025 09:00:16 
+
+605 D list=Port Scanners address=119.23.20.166 
+     creation-time=dec/23/2025 18:41:41 
+
+606 D list=trusted-ips address=192.168.151.0 creation-time=dec/24/2025 12:13:17 
+
+607 D list=Port Scanners address=50.116.44.20 creation-time=dec/24/2025 17:15:33 
+
+608 D list=Port Scanners address=192.155.84.147 
+     creation-time=dec/24/2025 17:45:58 
+
+609 D list=Port Scanners address=50.116.30.65 creation-time=dec/24/2025 18:08:10 
+
+610 D list=Port Scanners address=13.59.132.170 
+     creation-time=dec/24/2025 23:33:01 
+
+611 D list=Port Scanners address=161.35.42.70 creation-time=dec/25/2025 00:46:19 
+
+612 D list=Port Scanners address=47.120.53.59 creation-time=dec/25/2025 02:44:37 
+
+613 D list=Port Scanners address=188.166.154.34 
+     creation-time=dec/25/2025 03:37:01 
+
+614 D list=Port Scanners address=34.6.194.228 creation-time=dec/25/2025 06:10:47 
+
+615 D list=Port Scanners address=130.12.180.88 
+     creation-time=dec/25/2025 08:06:40 
+
+616 D list=Port Scanners address=62.210.97.98 creation-time=dec/25/2025 08:07:13 
+
+617 D list=trusted-ips address=192.168.94.17 creation-time=dec/25/2025 11:52:01 
+
+618 D list=trusted-ips address=192.168.150.221 
+     creation-time=dec/25/2025 17:29:37 
+
+619 D list=Port Scanners address=91.214.78.96 creation-time=dec/27/2025 07:42:44 
+
+620 D list=Port Scanners address=49.112.136.3 creation-time=dec/27/2025 12:49:59 
+
+621 D list=trusted-ips address=172.16.245.5 creation-time=dec/27/2025 13:20:47 
+
+622 D list=Port Scanners address=46.101.95.134 
+     creation-time=dec/27/2025 21:29:31 
+
+623 D list=Port Scanners address=172.104.30.66 
+     creation-time=dec/27/2025 22:55:53 
+
+624 D list=Port Scanners address=209.97.142.89 
+     creation-time=dec/28/2025 00:27:00 
+
+625 D list=Port Scanners address=199.45.155.94 
+     creation-time=dec/28/2025 03:35:43 
+
+626 D list=Port Scanners address=167.172.183.186 
+     creation-time=dec/28/2025 07:58:16 
+
+627 D list=Port Scanners address=178.128.37.88 
+     creation-time=dec/29/2025 00:36:19 
+
+628 D list=trusted-ips address=192.168.151.29 creation-time=dec/29/2025 11:06:55 
+
+629 D list=trusted-ips address=192.168.88.130 creation-time=dec/30/2025 04:31:13 
+
+630 D list=trusted-ips address=192.168.88.128 creation-time=dec/30/2025 05:17:23 
+
+631 D list=Port Scanners address=84.103.174.6 creation-time=dec/30/2025 21:42:39 
+
+632 D list=Port Scanners address=68.183.39.82 creation-time=dec/30/2025 21:42:52 
+
+633 D list=Port Scanners address=167.71.132.111 
+     creation-time=dec/31/2025 00:37:10 
+
+634 D list=trusted-ips address=172.16.16.20 creation-time=dec/31/2025 10:52:11 
+
+635 D list=Port Scanners address=134.209.19.66 
+     creation-time=dec/31/2025 21:35:58 
+
+636 D list=Port Scanners address=144.126.194.201 
+     creation-time=jan/01/2026 00:38:33 
+
+637 D list=Port Scanners address=34.32.135.35 creation-time=jan/01/2026 04:30:03 
+
+638 D list=Port Scanners address=195.154.200.178 
+     creation-time=jan/01/2026 05:41:27 
+
+639 D list=Port Scanners address=34.91.255.80 creation-time=jan/02/2026 03:17:26 
+
+640 D list=Port Scanners address=34.6.229.23 creation-time=jan/03/2026 08:03:18 
+
+641 D list=Port Scanners address=66.132.153.136 
+     creation-time=jan/03/2026 09:38:24 
+
+642 D list=Port Scanners address=167.94.138.117 
+     creation-time=jan/03/2026 12:16:06 
+
+643 D list=Port Scanners address=34.90.22.164 creation-time=jan/03/2026 22:27:50 
+
+644 D list=Port Scanners address=35.204.18.186 
+     creation-time=jan/04/2026 01:30:46 
+
+645 D list=Port Scanners address=206.168.34.193 
+     creation-time=jan/04/2026 10:14:58 
+
+646 D list=Port Scanners address=199.45.155.75 
+     creation-time=jan/05/2026 14:36:21 
+
+647 D list=Port Scanners address=157.245.41.172 
+     creation-time=jan/05/2026 20:12:34 
+
+648 D list=Port Scanners address=146.19.24.57 creation-time=jan/05/2026 21:34:41 
+
+649 D list=Port Scanners address=62.210.217.57 
+     creation-time=jan/06/2026 00:54:15 
+
+650 D list=trusted-ips address=192.168.88.19 creation-time=jan/06/2026 13:49:19 
+
+651 D list=trusted-ips address=192.168.100.15 creation-time=jan/06/2026 21:31:31 
+
+652 D list=trusted-ips address=192.168.150.148 
+     creation-time=jan/07/2026 14:08:01 
+
+653 D list=trusted-ips address=192.168.150.153 
+     creation-time=jan/07/2026 18:07:11 
+
+654 D list=Port Scanners address=199.45.154.149 
+     creation-time=jan/08/2026 07:59:07 
+
+655 D list=Port Scanners address=77.90.185.235 
+     creation-time=jan/08/2026 13:15:45 
+
+656 D list=Port Scanners address=82.147.85.37 creation-time=jan/08/2026 15:44:47 
+
+657 D list=Port Scanners address=202.12.97.195 
+     creation-time=jan/09/2026 11:20:45 
+
+658 D list=Port Scanners address=82.147.84.38 creation-time=jan/11/2026 22:03:13 
+
+659 D list=Port Scanners address=82.147.84.74 creation-time=jan/12/2026 02:57:56 
+
+660 D list=Port Scanners address=103.252.88.228 
+     creation-time=jan/12/2026 08:01:33 
+
+661 D list=trusted-ips address=192.168.88.39 creation-time=jan/12/2026 14:16:22 
+
+662 D list=Port Scanners address=50.116.23.178 
+     creation-time=jan/13/2026 05:06:55 
+
+663 D list=Port Scanners address=45.33.75.28 creation-time=jan/13/2026 05:14:31 
+
+664 D list=Port Scanners address=143.42.227.223 
+     creation-time=jan/13/2026 05:24:28 
+
+665 D list=Port Scanners address=143.42.188.111 
+     creation-time=jan/13/2026 05:26:17 
+
+666 D list=Port Scanners address=45.33.88.175 creation-time=jan/13/2026 05:33:38 
+
+667 D list=Port Scanners address=34.6.10.37 creation-time=jan/13/2026 19:03:15 
+
+668 D list=Port Scanners address=46.101.15.210 
+     creation-time=jan/14/2026 00:15:29 
+
+669 D list=Port Scanners address=139.59.180.141 
+     creation-time=jan/14/2026 00:56:35 
+
+670 D list=Port Scanners address=144.126.227.188 
+     creation-time=jan/14/2026 19:35:56 
+
+671 D list=Port Scanners address=45.227.254.132 
+     creation-time=jan/15/2026 09:10:13 
+
+672 D list=Port Scanners address=62.210.206.165 
+     creation-time=jan/15/2026 13:01:52 
+
+673 D list=trusted-ips address=192.168.1.34 creation-time=jan/15/2026 14:15:37 
+
+674 D list=Port Scanners address=178.239.180.201 
+     creation-time=jan/15/2026 18:11:32 
+
+675 D list=Port Scanners address=139.59.175.16 
+     creation-time=jan/16/2026 09:24:29 
+
+676 D list=Port Scanners address=3.101.239.115 
+     creation-time=jan/17/2026 08:43:23 
+
+677 D list=trusted-ips address=192.168.150.89 creation-time=jan/18/2026 07:03:48 
+
+678 D list=Port Scanners address=161.35.175.210 
+     creation-time=jan/18/2026 08:21:24 
+
+679 D list=Port Scanners address=45.33.12.231 creation-time=jan/18/2026 18:02:59 
+
+680 D list=Port Scanners address=138.68.129.60 
+     creation-time=jan/18/2026 19:47:36 
+
+681 D list=Port Scanners address=77.95.203.236 
+     creation-time=jan/20/2026 11:27:09 
+
+682 D list=Port Scanners address=209.97.132.117 
+     creation-time=jan/20/2026 18:28:48 
+
+683 D list=Port Scanners address=165.232.39.156 
+     creation-time=jan/20/2026 20:29:15 
+
+684 D list=Port Scanners address=167.86.107.100 
+     creation-time=jan/21/2026 08:23:57 
+
+685 D list=Port Scanners address=195.178.110.199 
+     creation-time=jan/22/2026 15:20:52 
+
+686 D list=Port Scanners address=45.148.10.247 
+     creation-time=jan/22/2026 16:22:27 
+
+687 D list=Port Scanners address=209.97.137.75 
+     creation-time=jan/23/2026 04:06:00 
+
+688 D list=Port Scanners address=104.128.64.107 
+     creation-time=jan/24/2026 03:15:55 
+
+689 D list=Port Scanners address=199.45.155.71 
+     creation-time=jan/24/2026 07:15:44 
+
+690 D list=trusted-ips address=192.168.100.149 
+     creation-time=jan/25/2026 05:19:09 
+
+691 D list=Port Scanners address=66.228.34.203 
+     creation-time=jan/25/2026 15:39:15 
+
+692 D list=Port Scanners address=66.132.153.120 
+     creation-time=jan/26/2026 00:43:10 
+
+693 D list=Port Scanners address=199.45.154.128 
+     creation-time=jan/26/2026 07:34:04 
+
+694 D list=Port Scanners address=162.142.125.38 
+     creation-time=jan/26/2026 08:31:10 
+
+695 D list=trusted-ips address=192.168.200.213 
+     creation-time=jan/26/2026 11:47:40 
+
+696 D list=Port Scanners address=78.128.114.38 
+     creation-time=jan/27/2026 15:12:17 
+
+697 D list=Port Scanners address=167.94.138.204 
+     creation-time=jan/29/2026 12:25:46 
+
+698 D list=Port Scanners address=98.159.226.91 
+     creation-time=jan/29/2026 17:21:04 
+
+699 D list=trusted-ips address=192.168.150.82 creation-time=jan/29/2026 17:51:15 
+
+700 D list=Port Scanners address=82.147.84.134 
+     creation-time=jan/29/2026 19:14:22 
+
+701 D list=Port Scanners address=82.147.84.53 creation-time=jan/29/2026 22:35:32 
+
+702 D list=Port Scanners address=206.217.216.8 
+     creation-time=jan/30/2026 07:01:59 
+
+703 D list=trusted-ips address=192.168.150.103 
+     creation-time=jan/30/2026 15:51:24 
+
+704 D list=trusted-ips address=194.93.24.44 creation-time=jan/30/2026 23:28:40 
+
+705 D list=Port Scanners address=220.169.121.131 
+     creation-time=jan/31/2026 17:13:32 
+
+706 D list=Port Scanners address=202.98.62.18 creation-time=jan/31/2026 18:14:08 
+
+707 D list=Port Scanners address=125.88.198.130 
+     creation-time=jan/31/2026 19:21:28 
+
+708 D list=trusted-ips address=192.168.150.137 
+     creation-time=feb/01/2026 02:05:29 
+
+709 D list=Port Scanners address=67.225.255.139 
+     creation-time=feb/02/2026 09:33:16 
+
+710 D list=Port Scanners address=103.213.244.68 
+     creation-time=feb/02/2026 15:28:33 
+
+711 D list=Port Scanners address=82.147.84.31 creation-time=feb/03/2026 15:05:44 
+
+712 D list=Port Scanners address=198.144.189.69 
+     creation-time=feb/04/2026 18:15:51 
+
+713 D list=Port Scanners address=82.147.85.190 
+     creation-time=feb/04/2026 21:52:10 
+
+714 D list=Port Scanners address=193.162.143.69 
+     creation-time=feb/05/2026 00:12:00 
+
+715 D list=Port Scanners address=195.178.110.108 
+     creation-time=feb/05/2026 00:39:55 
+
+716 D list=Port Scanners address=66.228.42.204 
+     creation-time=feb/05/2026 10:19:22 
+
+717 D list=trusted-ips address=192.168.100.146 
+     creation-time=feb/05/2026 13:00:20 
+
+718 D list=Port Scanners address=178.128.198.212 
+     creation-time=feb/05/2026 13:38:21 
+
+719 D list=Port Scanners address=104.152.52.240 
+     creation-time=feb/05/2026 19:39:51 
+
+720 D list=trusted-ips address=192.168.5.187 creation-time=feb/05/2026 19:56:57 
+
+721 D list=Port Scanners address=206.168.34.39 
+     creation-time=feb/06/2026 07:19:04 
+
+722 D list=trusted-ips address=192.168.5.91 creation-time=feb/06/2026 13:58:31 
+
+723 D list=Port Scanners address=84.247.152.177 
+     creation-time=feb/06/2026 18:14:39 
+
+724 D list=Port Scanners address=167.94.138.195 
+     creation-time=feb/07/2026 03:29:59 
+
+725 D list=Port Scanners address=47.237.175.70 
+     creation-time=feb/07/2026 03:39:13 
+
+726 D list=Port Scanners address=64.226.80.75 creation-time=feb/07/2026 19:04:20 
+
+727 D list=trusted-ips address=192.168.150.138 
+     creation-time=feb/07/2026 23:13:00 
+
+728 D list=trusted-ips address=192.168.150.253 
+     creation-time=feb/07/2026 23:13:00 
+
+729 D list=trusted-ips address=192.168.150.214 
+     creation-time=feb/07/2026 23:14:07 
+
+730 D list=trusted-ips address=192.168.100.78 creation-time=feb/08/2026 11:37:49 
+
+731 D list=trusted-ips address=192.168.151.10 creation-time=feb/08/2026 23:15:22 
+
+732 D list=trusted-ips address=192.168.150.58 creation-time=feb/08/2026 23:15:37 
+
+733 D list=trusted-ips address=192.168.150.152 
+     creation-time=feb/09/2026 08:14:03 
+
+734 D list=Port Scanners address=199.45.154.118 
+     creation-time=feb/09/2026 08:25:43 
+
+735 D list=trusted-ips address=192.168.150.44 creation-time=feb/09/2026 09:04:49 
+
+736 D list=Port Scanners address=66.228.36.223 
+     creation-time=feb/09/2026 09:09:23 
+
+737 D list=trusted-ips address=192.168.150.250 
+     creation-time=feb/09/2026 09:10:12 
+
+738 D list=trusted-ips address=192.168.151.60 creation-time=feb/09/2026 09:10:12 
+
+739 D list=trusted-ips address=192.168.151.41 creation-time=feb/09/2026 09:10:12 
+
+740 D list=trusted-ips address=192.168.150.66 creation-time=feb/09/2026 09:10:12 
+
+741 D list=trusted-ips address=192.168.150.251 
+     creation-time=feb/09/2026 09:20:09 
+
+742 D list=trusted-ips address=192.168.150.67 creation-time=feb/09/2026 09:23:38 
+
+743 D list=trusted-ips address=192.168.150.254 
+     creation-time=feb/09/2026 09:23:38 
+
+744 D list=trusted-ips address=192.168.150.48 creation-time=feb/09/2026 09:23:45 
+
+745 D list=trusted-ips address=192.168.150.106 
+     creation-time=feb/09/2026 09:28:33 
+
+746 D list=trusted-ips address=192.168.150.68 creation-time=feb/09/2026 09:28:40 
+
+747 D list=trusted-ips address=192.168.150.73 creation-time=feb/09/2026 09:59:45 
+
+748 D list=trusted-ips address=192.168.150.41 creation-time=feb/09/2026 09:59:45 
+
+749 D list=Port Scanners address=82.147.85.161 
+     creation-time=feb/09/2026 11:24:39 
+
+750 D list=trusted-ips address=172.16.1.209 creation-time=feb/09/2026 19:57:53 
+
+751 D list=Port Scanners address=199.45.155.90 
+     creation-time=feb/09/2026 20:02:51 
+
+752 D list=Port Scanners address=87.192.228.146 
+     creation-time=feb/09/2026 21:27:29 
+
+753 D list=Port Scanners address=172.232.216.237 
+     creation-time=feb/10/2026 02:41:53 
+
+754 D list=Port Scanners address=3.141.168.125 
+     creation-time=feb/10/2026 04:11:26 
+
+755 D list=Port Scanners address=82.147.84.47 creation-time=feb/10/2026 06:00:13 
+
+756 D list=Port Scanners address=46.101.177.21 
+     creation-time=feb/10/2026 11:34:28 
+
+757 D list=Port Scanners address=82.147.84.32 creation-time=feb/10/2026 12:03:10 
+
+758 D list=Port Scanners address=8.138.156.180 
+     creation-time=feb/10/2026 20:33:45 
+
+759 D list=Port Scanners address=139.59.211.87 
+     creation-time=feb/11/2026 02:48:10 
+
+760 D list=trusted-ips address=192.168.150.159 
+     creation-time=feb/11/2026 11:23:26 
+
+761 D list=Port Scanners address=18.224.93.149 
+     creation-time=feb/11/2026 15:32:00 
+
+762 D list=Port Scanners address=162.142.125.208 
+     creation-time=feb/11/2026 16:41:35 
+
+763 D list=Port Scanners address=46.101.195.81 
+     creation-time=feb/12/2026 02:58:10 
+
+764 D list=Port Scanners address=104.152.52.208 
+     creation-time=feb/12/2026 17:25:14 
+
+765 D list=Port Scanners address=209.38.204.37 
+     creation-time=feb/14/2026 12:42:21 
+
+766 D list=Port Scanners address=31.220.94.79 creation-time=feb/15/2026 13:59:33 
+
+767 D list=trusted-ips address=172.16.1.128 creation-time=feb/16/2026 03:19:49 
+
+768 D list=Port Scanners address=207.154.230.59 
+     creation-time=feb/16/2026 22:03:11 
+
+769 D list=Port Scanners address=64.89.160.47 creation-time=feb/17/2026 02:08:26 
+
+770 D list=Port Scanners address=130.12.181.151 
+     creation-time=feb/17/2026 05:31:44 
+
+771 D list=Port Scanners address=167.94.138.198 
+     creation-time=feb/17/2026 09:52:00 
+
+772 D list=trusted-ips address=192.168.100.138 
+     creation-time=feb/17/2026 12:58:13 
+
+773 D list=Port Scanners address=130.12.180.103 
+     creation-time=feb/17/2026 15:24:38 
+
+774 D list=Port Scanners address=98.159.226.87 
+     creation-time=feb/17/2026 16:45:15 
+
+775 D list=Port Scanners address=51.15.183.147 
+     creation-time=feb/17/2026 16:47:51 
+
+776 D list=Port Scanners address=130.12.181.157 
+     creation-time=feb/17/2026 17:28:37 
+
+777 D list=Port Scanners address=199.45.155.109 
+     creation-time=feb/18/2026 02:34:01 
+
+778 D list=Port Scanners address=66.132.153.138 
+     creation-time=feb/18/2026 07:32:02 
+
+779 D list=Port Scanners address=192.109.200.220 
+     creation-time=feb/18/2026 14:38:42 
+
+780 D list=Port Scanners address=151.249.166.191 
+     creation-time=feb/18/2026 15:02:48 
+
+781 D list=Port Scanners address=130.12.180.95 
+     creation-time=feb/18/2026 20:41:37 
+
+782 D list=Port Scanners address=64.89.161.53 creation-time=feb/19/2026 04:12:28 
+
+783 D list=Port Scanners address=165.227.162.70 
+     creation-time=feb/19/2026 11:29:44 
+
+784 D list=Port Scanners address=151.249.164.253 
+     creation-time=feb/19/2026 16:01:21 
+
+785 D list=Port Scanners address=209.38.253.189 
+     creation-time=feb/19/2026 18:44:19 
+
+786 D list=Port Scanners address=104.152.52.64 
+     creation-time=feb/19/2026 19:36:33 
+
+787 D list=Port Scanners address=192.109.200.219 
+     creation-time=feb/20/2026 03:34:28 
+
+788 D list=Port Scanners address=18.219.157.186 
+     creation-time=feb/20/2026 10:12:26 
+
+789 D list=Port Scanners address=46.151.182.45 
+     creation-time=feb/20/2026 12:02:15 
+
+790 D list=Port Scanners address=176.65.132.143 
+     creation-time=feb/20/2026 23:22:37 
+
+791 D list=Port Scanners address=3.15.180.31 creation-time=feb/21/2026 11:01:44 
+
+792 D list=Port Scanners address=64.89.161.182 
+     creation-time=feb/21/2026 14:38:40 
+
+793 D list=trusted-ips address=192.168.100.68 creation-time=feb/21/2026 17:19:58 
+
+794 D list=Port Scanners address=207.154.236.184 
+     creation-time=feb/21/2026 19:07:40 
+
+795 D list=Port Scanners address=130.12.180.107 
+     creation-time=feb/21/2026 22:35:43 
+
+796 D list=Port Scanners address=71.6.240.72 creation-time=feb/22/2026 18:03:53 
+
+797 D list=Port Scanners address=192.109.200.213 
+     creation-time=feb/22/2026 20:06:49 
+
+798 D list=Port Scanners address=82.147.85.167 
+     creation-time=feb/22/2026 20:32:01 
+
+799 D list=Port Scanners address=45.33.65.239 creation-time=feb/22/2026 23:01:55 
+
+800 D list=Port Scanners address=45.79.152.14 creation-time=feb/23/2026 12:46:34 
+
+801 D list=Port Scanners address=154.66.108.250 
+     creation-time=feb/23/2026 15:22:04 
+
+802 D list=Port Scanners address=46.175.135.6 creation-time=feb/23/2026 21:04:25 
+
+803 D list=Port Scanners address=206.168.34.206 
+     creation-time=feb/24/2026 06:35:41 
+
+804 D list=trusted-ips address=192.168.150.69 creation-time=feb/24/2026 14:45:59 
+
+805 D list=trusted-ips address=192.168.100.155 
+     creation-time=feb/24/2026 22:42:42 
+
+806 D list=Port Scanners address=164.90.189.145 
+     creation-time=feb/25/2026 02:38:12 
+
+807 D list=Port Scanners address=130.12.181.85 
+     creation-time=feb/25/2026 10:02:24 
+
+808 D list=Port Scanners address=45.153.34.117 
+     creation-time=feb/25/2026 12:32:38 
+
+809 D list=Port Scanners address=130.12.182.185 
+     creation-time=feb/25/2026 13:48:48 
+
+810 D list=Port Scanners address=46.101.189.52 
+     creation-time=feb/26/2026 02:53:46 
+
+811 D list=Port Scanners address=104.152.52.139 
+     creation-time=feb/26/2026 09:00:08 
+
+812 D list=Port Scanners address=61.190.137.130 
+     creation-time=feb/26/2026 14:13:21 
+
+813 D list=Port Scanners address=45.153.34.213 
+     creation-time=feb/26/2026 23:27:39 
+
+814 D list=Port Scanners address=45.33.96.41 creation-time=feb/27/2026 13:07:50 
+
+815 D list=Port Scanners address=193.135.174.82 
+     creation-time=feb/27/2026 16:14:49 
+
+816 D list=Port Scanners address=95.165.147.52 
+     creation-time=feb/28/2026 01:16:43 
+
+817 D list=Port Scanners address=18.222.201.82 
+     creation-time=feb/28/2026 01:54:40 
+
+818 D list=Port Scanners address=161.35.70.175 
+     creation-time=feb/28/2026 12:39:15 
+
+819 D list=trusted-ips address=192.168.151.104 
+     creation-time=mar/01/2026 11:25:37 
+
+820 D list=Port Scanners address=204.76.203.207 
+     creation-time=mar/01/2026 14:25:27 
+
+821 D list=trusted-ips address=192.168.5.241 creation-time=mar/02/2026 10:51:08 
+
+822 D list=trusted-ips address=192.168.150.142 
+     creation-time=mar/02/2026 11:31:33 
+
+823 D list=Port Scanners address=167.94.146.55 
+     creation-time=mar/03/2026 05:27:13 
+
+824 D list=Port Scanners address=160.119.76.250 
+     creation-time=mar/03/2026 11:02:09 
+
+825 D list=trusted-ips address=192.168.100.37 creation-time=mar/03/2026 12:08:43 
+
+826 D list=Port Scanners address=94.26.106.200 
+     creation-time=mar/04/2026 13:28:20 
+
+827 D list=Port Scanners address=104.152.52.138 
+     creation-time=mar/05/2026 08:30:38 
+
+828 D list=Port Scanners address=59.44.113.179 
+     creation-time=mar/05/2026 11:29:51 
+
+829 D list=Port Scanners address=112.102.196.2 
+     creation-time=mar/05/2026 11:29:54 
+
+830 D list=Port Scanners address=138.197.191.154 
+     creation-time=mar/05/2026 14:33:04 
+
+831 D list=Port Scanners address=209.38.229.113 
+     creation-time=mar/06/2026 06:59:38 
+
+832 D list=trusted-ips address=192.168.151.15 creation-time=mar/06/2026 11:36:44 
+
+833 D list=trusted-ips address=192.168.4.54 creation-time=mar/07/2026 18:23:29 
+
+834 D list=Port Scanners address=159.89.113.99 
+     creation-time=mar/07/2026 19:32:49 
+
+835 D list=Port Scanners address=199.45.154.115 
+     creation-time=mar/08/2026 01:09:16 
+
+836 D list=Port Scanners address=199.45.154.159 
+     creation-time=mar/09/2026 04:33:33 
+
+837 D list=trusted-ips address=192.168.5.190 creation-time=mar/09/2026 14:06:48 
+
+838 D list=trusted-ips address=192.168.151.57 creation-time=mar/10/2026 20:13:07 
+
+839 D list=trusted-ips address=192.168.88.191 creation-time=mar/12/2026 05:52:12 
+
+840 D list=trusted-ips address=192.168.88.192 creation-time=mar/12/2026 06:21:55 
+
+841 D list=Port Scanners address=135.125.218.163 
+     creation-time=mar/12/2026 11:29:39 
+
+842 D list=Port Scanners address=46.101.216.241 
+     creation-time=mar/12/2026 12:44:19 
+
+843 D list=Port Scanners address=82.147.84.198 
+     creation-time=mar/12/2026 12:57:09 
+
+844 D list=Port Scanners address=123.181.26.3 creation-time=mar/12/2026 16:28:52 
+
+845 D list=Port Scanners address=185.248.138.248 
+     creation-time=mar/12/2026 20:49:53 
+
+846 D list=Port Scanners address=104.152.52.221 
+     creation-time=mar/13/2026 01:53:32 
+
+847 D list=Port Scanners address=167.94.138.179 
+     creation-time=mar/13/2026 06:27:09 
+
+848 D list=trusted-ips address=192.168.150.161 
+     creation-time=mar/13/2026 08:49:55 
+
+849 D list=trusted-ips address=192.168.100.85 creation-time=mar/13/2026 09:00:46 
+
+850 D list=trusted-ips address=192.168.100.32 creation-time=mar/13/2026 09:05:18 
+
+851 D list=trusted-ips address=192.168.100.42 creation-time=mar/13/2026 09:34:38 
+
+852 D list=trusted-ips address=192.168.100.72 creation-time=mar/13/2026 09:47:08 
+
+853 D list=trusted-ips address=192.168.100.164 
+     creation-time=mar/13/2026 09:47:23 
+
+854 D list=trusted-ips address=192.168.150.43 creation-time=mar/13/2026 09:48:30 
+
+855 D list=trusted-ips address=192.168.150.26 creation-time=mar/13/2026 09:48:57 
+
+856 D list=trusted-ips address=192.168.100.123 
+     creation-time=mar/13/2026 09:51:17 
+
+857 D list=trusted-ips address=192.168.100.92 creation-time=mar/13/2026 09:51:56 
+
+858 D list=trusted-ips address=192.168.151.75 creation-time=mar/13/2026 09:52:32 
+
+859 D list=trusted-ips address=192.168.150.129 
+     creation-time=mar/13/2026 09:54:10 
+
+860 D list=trusted-ips address=192.168.100.14 creation-time=mar/13/2026 09:55:30 
+
+861 D list=trusted-ips address=192.168.151.45 creation-time=mar/13/2026 10:04:46 
+
+862 D list=trusted-ips address=192.168.151.3 creation-time=mar/13/2026 10:26:17 
+
+863 D list=trusted-ips address=192.168.150.228 
+     creation-time=mar/13/2026 10:28:25 
+
+864 D list=Port Scanners address=82.147.85.17 creation-time=mar/13/2026 15:21:40 
+
+865 D list=Port Scanners address=82.147.85.71 creation-time=mar/13/2026 15:34:00 
+
+866 D list=Port Scanners address=107.174.65.80 
+     creation-time=mar/13/2026 21:41:54 
+
+867 D list=Port Scanners address=199.45.154.134 
+     creation-time=mar/13/2026 22:33:55 
+
+868 D list=Port Scanners address=139.59.132.185 
+     creation-time=mar/14/2026 04:19:31 
+
+869 D list=Port Scanners address=206.168.34.123 
+     creation-time=mar/14/2026 04:42:35 
+
+870 D list=Port Scanners address=165.227.157.255 
+     creation-time=mar/14/2026 12:59:54 
+
+871 D list=Port Scanners address=192.253.248.134 
+     creation-time=mar/15/2026 11:18:26 
+
+872 D list=Port Scanners address=195.178.110.109 
+     creation-time=mar/15/2026 12:57:53 
+
+873 D list=trusted-ips address=192.168.88.131 creation-time=mar/16/2026 11:45:49 
+
+874 D list=trusted-ips address=192.168.100.49 creation-time=mar/16/2026 12:41:06 
+
+875 D list=trusted-ips address=172.16.245.6 creation-time=mar/16/2026 20:42:25 
+
+876 D list=Port Scanners address=162.142.125.123 
+     creation-time=mar/17/2026 06:00:43 
+
+877 D list=trusted-ips address=192.168.20.25 creation-time=mar/17/2026 12:10:13 
+
+878 D list=Port Scanners address=101.201.76.235 
+     creation-time=mar/17/2026 15:36:46 
+
+879 D list=Port Scanners address=47.237.184.86 
+     creation-time=mar/17/2026 15:39:47 
+
+880 D list=ddos-attackers address=192.168.88.189 
+     creation-time=mar/18/2026 06:34:08 timeout=9m22s 
+
+881 D list=trusted-ips address=192.168.150.62 creation-time=mar/18/2026 11:44:19 
+
+882 D list=Port Scanners address=138.68.81.226 
+     creation-time=mar/19/2026 00:05:23 
+
+883 D list=Port Scanners address=45.91.64.7 creation-time=mar/19/2026 04:38:20 
+
+884 D list=ddos-target address=192.168.88.189 creation-time=mar/19/2026 06:29:48 
+     timeout=9m22s 
+
+885 D list=ddos-target address=84.54.66.29 creation-time=mar/19/2026 07:16:57 
+     timeout=25s 
+
+886 D list=ddos-target address=195.158.21.58 creation-time=mar/19/2026 07:17:08 
+     timeout=36s 
+
+887 D list=ddos-target address=185.213.230.52 creation-time=mar/19/2026 07:19:11 
+     timeout=2m39s 
+
+888 D list=ddos-attackers address=185.213.230.52 
+     creation-time=mar/19/2026 07:19:11 timeout=2m40s 
+
+889 D list=ddos-target address=188.113.221.169 
+     creation-time=mar/19/2026 07:20:19 timeout=3m48s 
+
+890 D list=ddos-attackers address=188.113.221.169 
+     creation-time=mar/19/2026 07:20:22 timeout=3m50s 
+
+891 D list=ddos-target address=185.139.138.123 
+     creation-time=mar/19/2026 07:25:05 timeout=8m33s 
+
+892 D list=ddos-attackers address=185.139.138.123 
+     creation-time=mar/19/2026 07:25:07 timeout=8m36s 
+
+893 D list=ddos-target address=188.113.206.54 creation-time=mar/19/2026 07:25:42 
+     timeout=9m22s 
+
+894 D list=ddos-attackers address=188.113.206.54 
+     creation-time=mar/19/2026 07:25:42 timeout=9m22s 
+
+Flags: X - disabled, R - running, S - slave 
+ 0 RS name="ether1" default-name="ether1" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:27 orig-mac-address=18:FD:74:00:30:B3 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=on rx-flow-control=on speed=1Gbps 
+      bandwidth=unlimited/unlimited switch=switch1 
+
+ 1 RS name="ether2" default-name="ether2" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:28 orig-mac-address=18:FD:74:00:30:B4 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch1 
+
+ 2 RS name="ether3" default-name="ether3" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:29 orig-mac-address=18:FD:74:00:30:B5 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch1 
+
+ 3 RS name="ether4" default-name="ether4" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:2A orig-mac-address=18:FD:74:00:30:B6 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch1 
+
+ 4    name="ether5" default-name="ether5" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:2B orig-mac-address=18:FD:74:00:30:B7 
+      arp=enabled arp-timeout=auto loop-protect=on loop-protect-status=on 
+      loop-protect-send-interval=5s loop-protect-disable-time=5m 
+      auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch1 
+
+ 5    name="ether6" default-name="ether6" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:39 orig-mac-address=18:FD:74:00:30:B8 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch2 
+
+ 6    name="ether7" default-name="ether7" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:3A orig-mac-address=18:FD:74:00:30:B9 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch2 
+
+ 7    name="ether8" default-name="ether8" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:3B orig-mac-address=18:FD:74:00:30:BA 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch2 
+
+ 8    name="ether9" default-name="ether9" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:3C orig-mac-address=18:FD:74:00:30:BB 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch2 
+
+ 9    name="ether10" default-name="ether10" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:3D orig-mac-address=18:FD:74:00:30:BC 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch2 
+
+10    name="ether11" default-name="ether11" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:3E orig-mac-address=18:FD:74:00:30:BD 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch3 
+
+11    name="ether12" default-name="ether12" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:3F orig-mac-address=18:FD:74:00:30:BE 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch3 
+
+12    name="ether13" default-name="ether13" mtu=1500 l2mtu=1592 
+      mac-address=B8:69:F4:AD:E7:40 orig-mac-address=18:FD:74:00:30:BF 
+      arp=enabled arp-timeout=auto loop-protect=default 
+      loop-protect-status=off loop-protect-send-interval=5s 
+      loop-protect-disable-time=5m auto-negotiation=yes 
+      advertise=10M-half,10M-full,100M-half,100M-full,1000M-half,1000M-full 
+      full-duplex=yes tx-flow-control=off rx-flow-control=off speed=100Mbps 
+      bandwidth=unlimited/unlimited switch=switch3 
+
+Flags: X - disabled, R - running 
+ 0 R name="east_inet_br" mtu=auto actual-mtu=1500 l2mtu=1588 arp=enabled 
+     arp-timeout=auto mac-address=B8:69:F4:AD:E7:27 protocol-mode=rstp 
+     fast-forward=yes igmp-snooping=no auto-mac=yes ageing-time=5m 
+     priority=0x8000 max-message-age=20s forward-delay=15s 
+     transmit-hold-count=6 vlan-filtering=no dhcp-snooping=no 
+
+ 1 R name="lan_br" mtu=auto actual-mtu=1408 l2mtu=1588 arp=enabled 
+     arp-timeout=auto mac-address=02:16:77:2A:D3:4F protocol-mode=rstp 
+     fast-forward=yes igmp-snooping=no auto-mac=yes ageing-time=5m 
+     priority=0x8000 max-message-age=20s forward-delay=15s 
+     transmit-hold-count=6 vlan-filtering=no dhcp-snooping=no 
+
+ 2 X name="ut_inet_br0" mtu=auto arp=enabled arp-timeout=auto 
+     mac-address=62:FD:11:2D:3C:F9 protocol-mode=rstp fast-forward=yes 
+     igmp-snooping=no auto-mac=yes ageing-time=5m priority=0x8000 
+     max-message-age=20s forward-delay=15s transmit-hold-count=6 
+     vlan-filtering=no dhcp-snooping=no 
+
+ 3 R name="ut_inet_br1" mtu=auto actual-mtu=1500 l2mtu=1588 arp=enabled 
+     arp-timeout=auto mac-address=B8:69:F4:AD:E7:27 protocol-mode=rstp 
+     fast-forward=yes igmp-snooping=no auto-mac=yes ageing-time=5m 
+     priority=0x8000 max-message-age=20s forward-delay=15s 
+     transmit-hold-count=6 vlan-filtering=no dhcp-snooping=no 
+
+ 4 R name="ut_inet_br2" mtu=auto actual-mtu=1500 l2mtu=1588 arp=enabled 
+     arp-timeout=auto mac-address=B8:69:F4:AD:E7:27 protocol-mode=rstp 
+     fast-forward=yes igmp-snooping=no auto-mac=yes ageing-time=5m 
+     priority=0x8000 max-message-age=20s forward-delay=15s 
+     transmit-hold-count=6 vlan-filtering=no dhcp-snooping=no 
+
+ 5 R name="ut_inet_br3" mtu=auto actual-mtu=1500 l2mtu=1588 arp=enabled 
+     arp-timeout=auto mac-address=B8:69:F4:AD:E7:27 protocol-mode=rstp 
+     fast-forward=yes igmp-snooping=no auto-mac=yes ageing-time=5m 
+     priority=0x8000 max-message-age=20s forward-delay=15s 
+     transmit-hold-count=6 vlan-filtering=no dhcp-snooping=no 
+
+Flags: X - disabled, I - inactive, D - dynamic, H - hw-offload 
+ 0 XI   interface=bonding1 bridge=ut_inet_br1 priority=0x80 path-cost=10 
+       internal-path-cost=10 edge=auto point-to-point=auto learn=auto 
+       horizon=none auto-isolate=no restricted-role=no restricted-tcn=no 
+       pvid=10 frame-types=admit-all ingress-filtering=yes 
+       unknown-unicast-flood=yes unknown-multicast-flood=yes 
+       broadcast-flood=yes tag-stacking=no bpdu-guard=no trusted=no 
+       multicast-router=temporary-query fast-leave=no 
+
+ 1     interface=vlan40 bridge=east_inet_br priority=0x80 path-cost=10 
+       internal-path-cost=10 edge=auto point-to-point=auto learn=auto 
+       horizon=none auto-isolate=no restricted-role=no restricted-tcn=no 
+       pvid=1 frame-types=admit-all ingress-filtering=no 
+       unknown-unicast-flood=yes unknown-multicast-flood=yes 
+       broadcast-flood=yes tag-stacking=no bpdu-guard=no trusted=no 
+       multicast-router=temporary-query fast-leave=no 
+
+ 2     interface=INHA_RT_EOIP bridge=lan_br priority=0x80 path-cost=10 
+       internal-path-cost=10 edge=auto point-to-point=auto learn=auto 
+       horizon=none auto-isolate=no restricted-role=no restricted-tcn=no 
+       pvid=1 frame-types=admit-all ingress-filtering=no 
+       unknown-unicast-flood=yes unknown-multicast-flood=yes 
+       broadcast-flood=yes tag-stacking=no bpdu-guard=no trusted=no 
+       multicast-router=temporary-query fast-leave=no 
+
+ 3     interface=bonding2 bridge=lan_br priority=0x80 path-cost=10 
+       internal-path-cost=10 edge=auto point-to-point=auto learn=auto 
+       horizon=none hw=yes auto-isolate=no restricted-role=no 
+       restricted-tcn=no pvid=10 frame-types=admit-all ingress-filtering=yes 
+       unknown-unicast-flood=yes unknown-multicast-flood=yes 
+       broadcast-flood=yes tag-stacking=no bpdu-guard=no trusted=no 
+       multicast-router=temporary-query fast-leave=no 
+
+ 4     interface=vlan1708 bridge=ut_inet_br2 priority=0x80 path-cost=10 
+       internal-path-cost=10 edge=auto point-to-point=auto learn=auto 
+       horizon=none auto-isolate=no restricted-role=no restricted-tcn=no 
+       pvid=1 frame-types=admit-all ingress-filtering=no 
+       unknown-unicast-flood=yes unknown-multicast-flood=yes 
+       broadcast-flood=yes tag-stacking=no bpdu-guard=no trusted=no 
+       multicast-router=temporary-query fast-leave=no 
+
+ 5     interface=vlan1706 bridge=ut_inet_br3 priority=0x80 path-cost=10 
+       internal-path-cost=10 edge=auto point-to-point=auto learn=auto 
+       horizon=none auto-isolate=no restricted-role=no restricted-tcn=no 
+       pvid=1 frame-types=admit-all ingress-filtering=no 
+       unknown-unicast-flood=yes unknown-multicast-flood=yes 
+       broadcast-flood=yes tag-stacking=no bpdu-guard=no trusted=no 
+       multicast-router=temporary-query fast-leave=no 
+
+ 6     interface=vlan11 bridge=lan_br priority=0x80 path-cost=10 
+       internal-path-cost=10 edge=auto point-to-point=auto learn=auto 
+       horizon=none auto-isolate=no restricted-role=no restricted-tcn=no 
+       pvid=1 frame-types=admit-all ingress-filtering=no 
+       unknown-unicast-flood=yes unknown-multicast-flood=yes 
+       broadcast-flood=yes tag-stacking=no bpdu-guard=no trusted=no 
+       multicast-router=temporary-query fast-leave=no 
+
+ 7     interface=vlan2861 bridge=ut_inet_br1 priority=0x80 path-cost=10 
+       internal-path-cost=10 edge=auto point-to-point=auto learn=auto 
+       horizon=none auto-isolate=no restricted-role=no restricted-tcn=no 
+       pvid=1 frame-types=admit-all ingress-filtering=no 
+       unknown-unicast-flood=yes unknown-multicast-flood=yes 
+       broadcast-flood=yes tag-stacking=no bpdu-guard=no trusted=no 
+       multicast-router=temporary-query fast-leave=no 
+
+Flags: X - disabled, R - running 
+ 0 R name="vlan11" mtu=1500 l2mtu=1588 mac-address=B8:69:F4:AD:E7:27 
+     arp=enabled arp-timeout=auto loop-protect=default 
+     loop-protect-status=off loop-protect-send-interval=5s 
+     loop-protect-disable-time=5m vlan-id=11 interface=bonding1 
+     use-service-tag=no 
+
+ 1 R name="vlan40" mtu=1500 l2mtu=1588 mac-address=B8:69:F4:AD:E7:27 
+     arp=enabled arp-timeout=auto loop-protect=default 
+     loop-protect-status=off loop-protect-send-interval=5s 
+     loop-protect-disable-time=5m vlan-id=40 interface=bonding1 
+     use-service-tag=no 
+
+ 2 R name="vlan1706" mtu=1500 l2mtu=1588 mac-address=B8:69:F4:AD:E7:27 
+     arp=enabled arp-timeout=auto loop-protect=default 
+     loop-protect-status=off loop-protect-send-interval=5s 
+     loop-protect-disable-time=5m vlan-id=1706 interface=bonding1 
+     use-service-tag=no 
+
+ 3 R name="vlan1708" mtu=1500 l2mtu=1588 mac-address=B8:69:F4:AD:E7:27 
+     arp=enabled arp-timeout=auto loop-protect=default 
+     loop-protect-status=off loop-protect-send-interval=5s 
+     loop-protect-disable-time=5m vlan-id=1708 interface=bonding1 
+     use-service-tag=no 
+
+ 4 R name="vlan2861" mtu=1500 l2mtu=1588 mac-address=B8:69:F4:AD:E7:27 
+     arp=enabled arp-timeout=auto loop-protect=default 
+     loop-protect-status=off loop-protect-send-interval=5s 
+     loop-protect-disable-time=5m vlan-id=2861 interface=bonding1 
+     use-service-tag=no 
+
+mar/18 19:40:03 ipsec,error phase1 negotiation failed due to time up 213.230.65.130[500]<=>167.94.138.166[11540] e8aa24d1a6fabf39:8a0909b115d94337 
+mar/18 19:40:43 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 19:40:44 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 19:40:44 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 19:40:46 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 19:52:18 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b4dd3d 
+mar/18 20:22:24 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b4fd4c 
+mar/18 20:24:39 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 20:24:39 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 20:24:40 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 20:24:40 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 20:52:31 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b51c68 
+mar/18 20:54:26 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 20:54:26 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 20:54:27 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 20:54:27 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 21:22:58 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b53c66 
+mar/18 21:38:17 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 21:38:17 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 21:38:18 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 21:38:18 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 21:53:19 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b55be6 
+mar/18 22:23:33 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b57c5a 
+mar/18 22:31:09 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 22:31:09 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 22:31:10 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 22:31:10 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 22:53:35 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b59bb8 
+mar/18 22:58:38 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 22:58:38 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 22:58:39 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 22:58:39 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 23:23:50 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b5bbee 
+mar/18 23:52:51 ipsec,error no suitable proposal found. 
+mar/18 23:52:51 ipsec,error 205.210.31.65 failed to get valid proposal. 
+mar/18 23:52:51 ipsec,error 205.210.31.65 failed to pre-process ph1 packet (side: 1, status 1). 
+mar/18 23:52:51 ipsec,error 205.210.31.65 phase1 negotiation failed. 
+mar/18 23:54:01 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b5db4c 
+mar/18 23:56:36 ipsec,error phase1 negotiation failed due to time up 94.141.76.162[4500]<=>193.163.125.34[20282] 20c3c0ac3f2b7f96:aa4b018c203b49a4 
+mar/18 23:59:46 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 23:59:46 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 23:59:47 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+mar/18 23:59:47 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+00:23:51 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+00:23:52 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+00:23:53 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+00:23:54 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+00:24:10 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b5fbb9 
+00:41:47 ipsec,error phase1 negotiation failed due to time up 194.93.24.44[500]<=>167.94.138.160[34186] bb85d5edc64185bb:5d42e3f84359455a 
+00:54:38 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b61af5 
+01:17:23 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+01:17:24 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+01:17:24 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+01:17:25 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+01:24:50 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b63b42 
+01:41:06 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+01:41:06 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+01:41:07 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+01:41:07 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+01:55:13 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b65a7c 
+02:25:36 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b67ab3 
+02:38:20 ipsec,error phase1 negotiation failed due to time up 213.230.65.131[500]<=>167.94.138.162[62699] 6786716a06cb66d6:7debd4fb7e67b6bc 
+02:50:30 ipsec,error phase1 negotiation failed due to time up 217.30.162.34[500]<=>167.94.138.157[50511] 4d65822107fcfd52:20d6ba6b2292b4e7 
+02:50:40 ipsec,error phase1 negotiation failed due to time up 217.30.162.34[500]<=>167.94.138.45[8412] cf66069845651bb0:9a6abac1eb7669f4 
+02:55:57 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b69a56 
+03:26:18 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b6ba74 
+03:33:57 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+03:33:58 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+03:33:58 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+03:33:59 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+03:56:20 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b6da02 
+03:58:06 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+03:58:07 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+03:58:07 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+03:58:08 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+04:22:49 ipsec,error phase1 negotiation failed due to time up 213.230.65.130[500]<=>194.164.107.4[44734] a90dcd7334082455:1e552186b6fb9793 
+04:26:46 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b6fa19 
+04:40:53 ipsec,error phase1 negotiation failed due to time up 94.141.76.162[500]<=>66.132.153.113[33030] b152de14462b8b28:91eb87f646f235e2 
+04:51:11 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+04:51:13 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+04:51:13 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+04:51:14 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+04:56:57 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b719c1 
+05:14:46 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+05:14:46 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+05:14:47 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+05:14:47 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+05:27:22 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b739f0 
+05:43:29 ipsec,error phase1 negotiation failed due to time up 194.93.24.43[500]<=>167.94.138.182[25863] 9ca8fc603b424d91:0b660c7196f37e34 
+05:57:51 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b7598a 
+06:06:41 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+06:06:41 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+06:06:41 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+06:06:42 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+06:24:59 ipsec,error phase1 negotiation failed due to time up 217.30.162.34[4500]<=>193.163.125.31[22208] e031dfa4358f75d6:a0033f13cb707e75 
+06:28:01 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b77a16 
+06:30:06 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+06:30:06 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+06:30:06 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+06:30:07 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+06:58:04 ipsec,error IPsec-SA expired before finishing rekey: 87.237.236.75[500]<->213.230.65.130[500] spi=0xe0b7992e 
+07:16:47 system,error,critical login failure for user root from 130.12.180.51 via ssh 
+07:21:05 ssh,error can't agree on KEX algorithms 
+07:21:47 system,error,critical login failure for user root from 130.12.180.51 via ssh 
+07:21:59 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+07:22:01 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+07:22:01 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+07:22:02 system,error,critical login failure for user admin from 95.131.149.240 via winbox 
+07:25:12 ssh,error can't agree on KEX algorithms 
+07:26:00 ssh,error can't agree on KEX algorithms 
+07:26:25 ssh,error can't agree on KEX algorithms 
+
