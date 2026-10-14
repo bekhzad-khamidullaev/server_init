@@ -1,0 +1,15 @@
+# Local machine files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Local configuration; keep examples versioned
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Local runtime files already present must be reviewed separately
+/mikrotik_apply_fw_hardening.log
+/run_mikrotik_cmds.log
